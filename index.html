@@ -2409,23 +2409,21 @@ function submitForm() {
   window._submitName = d.nameText || d.nameAudio || '';
   window._submitVillage = d.villageText || d.villageAudio || '';
 
-  if (typeof google !== 'undefined' && google.script && google.script.run) {
-    google.script.run
-      .withSuccessHandler(function(res) {
-        document.getElementById('submitBtn').disabled = false;
-        if (res && res.status==='success') { onSuccess(res); }
-        else if (res && res.status==='duplicate') {
-          showProcessingOverlay(false);
-          showStatus(res.message,'error');
-          document.getElementById('submitBtn').disabled = false;
-        } else { onError(res); }
-      })
-      .withFailureHandler(onError)
-      .saveResponse(d);
-  } else {
-    console.log('Survey data:', JSON.stringify(d,null,2));
-    onSuccess({message:'preview'});
-  }
+  fetch('https://script.google.com/macros/s/AKfycbxAa88Suw5B2er_V1ydFseowLQKkQ1SmfxsTGSkXzBYYtxLX2TJliqFG2oYYusnnWt2WA/exec', {
+    method: 'POST',
+    body: JSON.stringify(d)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    document.getElementById('submitBtn').disabled = false;
+    if(res && res.status==='success') { onSuccess(res); }
+    else if(res && res.status==='duplicate') {
+      showProcessingOverlay(false);
+      showStatus(res.message,'error');
+      document.getElementById('submitBtn').disabled = false;
+    } else { onError(res); }
+  })
+  .catch(function(err){ onError(err); });
 }
 
 function onSuccess(res) {
