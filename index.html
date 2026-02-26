@@ -1949,7 +1949,7 @@ function speakText(text, btnId) {
         currentAudio.play().catch(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);});
       })
       .withFailureHandler(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);})
-      .fetchTTSAudio(text,tl);
+      .TTSAudio(text,tl);
   } else {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -2036,7 +2036,7 @@ function _speakChunks(chunks, startIdx, btnId, onIdxUpdate) {
         currentAudio.play().catch(function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);});
       })
       .withFailureHandler(function(){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);})
-      .fetchTTSAudio(chunk,tl);
+      .TTSAudio(chunk,tl);
   } else {
     if('speechSynthesis' in window){
       window.speechSynthesis.cancel();
