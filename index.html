@@ -1951,14 +1951,29 @@ function speakText(text, btnId) {
       .withFailureHandler(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);})
       .TTSAudio(text,tl);
   } else {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      var u2=new SpeechSynthesisUtterance(text); u2.lang=lang; u2.rate=0.85; u2.volume=1;
-      u2.onstart=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
-      u2.onend=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);};
-      u2.onerror=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);};
-      window.speechSynthesis.speak(u2);
-    } else { if(btnId)setBtnState(btnId,false); showTextPopup(text); }
+    // Use Google Translate TTS for Tamil and Hindi
+    var gtLang = LANG_TTS[lang] || 'en';
+    var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
+      + encodeURIComponent(text.substring(0, 200))
+      + '&tl=' + gtLang + '&client=gtx';
+    stopAllAudio();
+    currentAudio = new Audio(url);
+    currentAudio.volume = 1;
+    currentAudio.onplay = function(){ ttsActive=true; if(btnId) setBtnState(btnId,true,'playing'); };
+    currentAudio.onended = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; };
+    currentAudio.onerror = function(){
+      ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null;
+      // Fallback to browser TTS
+      if('speechSynthesis' in window){
+        var u2=new SpeechSynthesisUtterance(text); u2.lang=lang; u2.rate=0.85;
+        u2.onstart=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
+        u2.onend=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);};
+        window.speechSynthesis.speak(u2);
+      } else { showTextPopup(text); }
+    };
+    currentAudio.play().catch(function(){
+      ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text);
+    });
   }
 }
 
