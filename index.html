@@ -1952,28 +1952,29 @@ function speakText(text, btnId) {
       .TTSAudio(text,tl);
   } else {
     // Use Google Translate TTS for Tamil and Hindi
-    var gtLang = LANG_TTS[lang] || 'en';
-    var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
-      + encodeURIComponent(text.substring(0, 200))
-      + '&tl=' + gtLang + '&client=gtx';
+    tl = LANG_TTS[lang] || 'ta';
+    var encoded = encodeURIComponent(text.substring(0, 180));
+    var proxyUrl = 'https://api.allorigins.win/raw?url=' 
+      + encodeURIComponent(
+          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
+          + encoded + '&tl=' + tl + '&client=gtx'
+        );
     stopAllAudio();
-    currentAudio = new Audio(url);
-    currentAudio.volume = 1;
-    currentAudio.onplay = function(){ ttsActive=true; if(btnId) setBtnState(btnId,true,'playing'); };
-    currentAudio.onended = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; };
-    currentAudio.onerror = function(){
-      ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null;
-      // Fallback to browser TTS
-      if('speechSynthesis' in window){
-        var u2=new SpeechSynthesisUtterance(text); u2.lang=lang; u2.rate=0.85;
-        u2.onstart=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
-        u2.onend=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);};
-        window.speechSynthesis.speak(u2);
-      } else { showTextPopup(text); }
-    };
-    currentAudio.play().catch(function(){
-      ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text);
-    });
+    if (btnId) setBtnState(btnId, true, 'loading');
+    fetch(proxyUrl)
+      .then(function(r){ return r.blob(); })
+      .then(function(blob){
+        var blobUrl = URL.createObjectURL(blob);
+        currentAudio = new Audio(blobUrl);
+        currentAudio.volume = 1;
+        currentAudio.onplay = function(){ ttsActive=true; if(btnId) setBtnState(btnId,true,'playing'); };
+        currentAudio.onended = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; URL.revokeObjectURL(blobUrl); };
+        currentAudio.onerror = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; showTextPopup(text); };
+        currentAudio.play().catch(function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text); });
+      })
+      .catch(function(){
+        ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text);
+      });
   }
 }
 
@@ -2053,14 +2054,26 @@ function _speakChunks(chunks, startIdx, btnId, onIdxUpdate) {
       .withFailureHandler(function(){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);})
       .TTSAudio(chunk,tl);
   } else {
-    if('speechSynthesis' in window){
-      window.speechSynthesis.cancel();
-      var u=new SpeechSynthesisUtterance(chunk); u.lang=lang; u.rate=0.85; u.volume=1;
-      u.onstart=function(){ttsActive=true;setBtnState(btnId,true,'playing');};
-      u.onend=function(){ttsActive=false;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
-      u.onerror=function(){ttsActive=false;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
-      window.speechSynthesis.speak(u);
-    }
+    var tl2 = LANG_TTS[lang] || 'ta';
+    var encoded2 = encodeURIComponent(chunk.substring(0, 180));
+    var proxyUrl2 = 'https://api.allorigins.win/raw?url='
+      + encodeURIComponent(
+          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
+          + encoded2 + '&tl=' + tl2 + '&client=gtx'
+        );
+    fetch(proxyUrl2)
+      .then(function(r){ return r.blob(); })
+      .then(function(blob){
+        var blobUrl = URL.createObjectURL(blob);
+        stopAllAudio(); activeBtnId = btnId;
+        currentAudio = new Audio(blobUrl);
+        currentAudio.volume = 1;
+        currentAudio.onplay = function(){ ttsActive=true; setBtnState(btnId,true,'playing'); };
+        currentAudio.onended = function(){ ttsActive=false; currentAudio=null; URL.revokeObjectURL(blobUrl); onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
+        currentAudio.onerror = function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
+        currentAudio.play().catch(function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
+      })
+      .catch(function(){ onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
   }
 }
 
