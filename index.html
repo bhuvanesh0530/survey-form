@@ -1964,9 +1964,24 @@ function _splitChunks(text) {
 }
 
 // ---------------------------------------------------------------
-//  TAMIL TTS via Google Translate audio (chunked, no proxy)
-//  Works on laptop + Android. Small chunks avoid URL length limits.
+//  TAMIL TTS
+//  Priority 1: native speechSynthesis if a Tamil voice is installed
+//              (Android Chrome always has one; some Windows/Mac too)
+//  Priority 2: allorigins proxy → Google Translate TTS audio
+//              (works on any browser/OS with no Tamil voice installed)
 // ---------------------------------------------------------------
+
+function _getTamilVoice() {
+  if (!('speechSynthesis' in window)) return null;
+  var voices = window.speechSynthesis.getVoices();
+  for (var i = 0; i < voices.length; i++) {
+    if (voices[i].lang && voices[i].lang.toLowerCase().indexOf('ta') === 0) {
+      return voices[i];
+    }
+  }
+  return null;
+}
+
 function _tamilSpeakChunks(chunks, idx, btnId) {
   if (_ttsStopRequested || idx >= chunks.length) {
     ttsActive = false;
@@ -1979,36 +1994,49 @@ function _tamilSpeakChunks(chunks, idx, btnId) {
   if (btnId) setBtnState(btnId, true, 'playing');
 
   var chunkText = chunks[idx];
-  var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ta&q=' + encodeURIComponent(chunkText);
+  var taVoice = _getTamilVoice();
 
-  // Reuse or create audio element
-  if (!_ttsAudioEl) {
-    _ttsAudioEl = new Audio();
+  if (taVoice) {
+    // Native Tamil voice available — instant, no network needed
+    var u = new SpeechSynthesisUtterance(chunkText);
+    u.voice = taVoice;
+    u.lang  = 'ta-IN';
+    u.rate  = 0.88;
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    u.onend = function() {
+      if (_ttsStopRequested) return;
+      setTimeout(function() { _tamilSpeakChunks(chunks, idx + 1, btnId); }, 60);
+    };
+    u.onerror = function(e) {
+      if (_ttsStopRequested || e.error === 'interrupted' || e.error === 'canceled') return;
+      setTimeout(function() { _tamilSpeakChunks(chunks, idx + 1, btnId); }, 60);
+    };
+    window.speechSynthesis.speak(u);
+
+  } else {
+    // No Tamil voice — use allorigins proxy to fetch Google Translate TTS audio
+    // allorigins /raw returns the MP3 bytes directly, bypassing CORS
+    var ttsUrl   = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ta&q=' + encodeURIComponent(chunkText);
+    var proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(ttsUrl);
+
+    if (!_ttsAudioEl) _ttsAudioEl = new Audio();
+    _ttsAudioEl.pause();
+    _ttsAudioEl.src = proxyUrl;
+
+    _ttsAudioEl.onended = function() {
+      if (_ttsStopRequested) return;
+      setTimeout(function() { _tamilSpeakChunks(chunks, idx + 1, btnId); }, 80);
+    };
+    _ttsAudioEl.onerror = function() {
+      if (_ttsStopRequested) return;
+      setTimeout(function() { _tamilSpeakChunks(chunks, idx + 1, btnId); }, 80);
+    };
+    _ttsAudioEl.play().catch(function() {
+      if (_ttsStopRequested) return;
+      setTimeout(function() { _tamilSpeakChunks(chunks, idx + 1, btnId); }, 80);
+    });
   }
-  _ttsAudioEl.pause();
-  _ttsAudioEl.src = url;
-
-  _ttsAudioEl.onended = function() {
-    if (_ttsStopRequested) return;
-    setTimeout(function() {
-      _tamilSpeakChunks(chunks, idx + 1, btnId);
-    }, 60);
-  };
-
-  _ttsAudioEl.onerror = function() {
-    if (_ttsStopRequested) return;
-    // Skip failed chunk silently and continue
-    setTimeout(function() {
-      _tamilSpeakChunks(chunks, idx + 1, btnId);
-    }, 60);
-  };
-
-  _ttsAudioEl.play().catch(function() {
-    // Autoplay blocked — try next chunk
-    setTimeout(function() {
-      _tamilSpeakChunks(chunks, idx + 1, btnId);
-    }, 60);
-  });
 }
 
 // ---------------------------------------------------------------
