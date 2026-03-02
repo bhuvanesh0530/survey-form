@@ -1879,9 +1879,16 @@ function showHide(id, show) {
 }
 
 // ================================================================
-//  TTS — FIXED: Uses native speechSynthesis for ALL languages
-//  No proxy, no external fetch. Instant playback.
+//  TTS ENGINE
+//  - Tamil  → Google Translate TTS audio (chunked, no proxy needed)
+//  - Hindi / English → native speechSynthesis (instant, no network)
 // ================================================================
+
+// ---- helpers ----
+var _ttsStopRequested = false;
+var _ttsAudioEl = null;   // current <audio> used for Tamil chunks
+var _ttsChunks  = [];
+var _ttsChunkIdx = 0;
 
 function speakQText(qTextElemId, btnId) {
   var el = document.getElementById(qTextElemId);
@@ -1915,100 +1922,136 @@ function speakMatrixQuestion(matrixType, btnId) {
   if (text) speakText(text, btnId);
 }
 
-/**
- * CORE TTS FUNCTION — Chunked version
- * Splits text into small sentences and speaks them one by one.
- * This fixes Tamil (and long Hindi/English) being silently cut off mid-way
- * by the browser's speechSynthesis engine.
- */
-
-// Global chunk queue state
-var _ttsChunks = [];
-var _ttsChunkIdx = 0;
-var _ttsStopRequested = false;
-
-// Split text into small speakable chunks (by sentence punctuation + newlines)
+// ---------------------------------------------------------------
+//  Split long text into chunks ≤ 180 chars at sentence boundaries
+// ---------------------------------------------------------------
 function _splitChunks(text) {
-  // Split on Tamil/Hindi/English sentence endings and newlines
-  var parts = text.split(/(?<=[.!?।\n])\s*/u);
-  var chunks = [], chunk = '';
-  for (var i = 0; i < parts.length; i++) {
-    var s = parts[i].trim();
+  // Normalise newlines to period-space so they become sentence breaks
+  var normalised = text.replace(/\n+/g, '. ').replace(/\.\.+/g, '.').trim();
+  // Split after every sentence-ending punctuation
+  var sentences = normalised.match(/[^.!?]+[.!?]*/g) || [normalised];
+  var chunks = [], cur = '';
+  for (var i = 0; i < sentences.length; i++) {
+    var s = sentences[i].trim();
     if (!s) continue;
-    // Keep chunks under 120 chars so browser doesn't cut off Tamil
-    if ((chunk + ' ' + s).trim().length <= 120) {
-      chunk = (chunk + ' ' + s).trim();
+    if ((cur + ' ' + s).trim().length <= 180) {
+      cur = (cur + ' ' + s).trim();
     } else {
-      if (chunk) chunks.push(chunk);
-      // If single sentence is > 120 chars, split further by comma/space
-      if (s.length > 120) {
-        var subparts = s.split(/(?<=[,;])\s*/u);
+      if (cur) chunks.push(cur);
+      // sentence itself too long → split by comma
+      if (s.length > 180) {
+        var parts = s.split(/,\s*/);
         var sub = '';
-        for (var j = 0; j < subparts.length; j++) {
-          var sp = subparts[j].trim();
-          if (!sp) continue;
-          if ((sub + ' ' + sp).trim().length <= 120) {
-            sub = (sub + ' ' + sp).trim();
+        for (var j = 0; j < parts.length; j++) {
+          var p = parts[j].trim();
+          if (!p) continue;
+          if ((sub + ', ' + p).trim().length <= 180) {
+            sub = sub ? sub + ', ' + p : p;
           } else {
             if (sub) chunks.push(sub);
-            sub = sp;
+            sub = p;
           }
         }
         if (sub) chunks.push(sub);
-        chunk = '';
+        cur = '';
       } else {
-        chunk = s;
+        cur = s;
       }
     }
   }
-  if (chunk) chunks.push(chunk);
+  if (cur) chunks.push(cur);
   return chunks.filter(function(c){ return c.trim().length > 0; });
 }
 
-function _speakChunk(chunks, idx, btnId) {
+// ---------------------------------------------------------------
+//  TAMIL TTS via Google Translate audio (chunked, no proxy)
+//  Works on laptop + Android. Small chunks avoid URL length limits.
+// ---------------------------------------------------------------
+function _tamilSpeakChunks(chunks, idx, btnId) {
   if (_ttsStopRequested || idx >= chunks.length) {
-    // All done or stopped
     ttsActive = false;
     activeBtnId = null;
     if (btnId) setBtnState(btnId, false);
     return;
   }
 
+  ttsActive = true;
+  if (btnId) setBtnState(btnId, true, 'playing');
+
   var chunkText = chunks[idx];
-  var u = new SpeechSynthesisUtterance(chunkText);
+  var url = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=ta&q=' + encodeURIComponent(chunkText);
+
+  // Reuse or create audio element
+  if (!_ttsAudioEl) {
+    _ttsAudioEl = new Audio();
+  }
+  _ttsAudioEl.pause();
+  _ttsAudioEl.src = url;
+
+  _ttsAudioEl.onended = function() {
+    if (_ttsStopRequested) return;
+    setTimeout(function() {
+      _tamilSpeakChunks(chunks, idx + 1, btnId);
+    }, 60);
+  };
+
+  _ttsAudioEl.onerror = function() {
+    if (_ttsStopRequested) return;
+    // Skip failed chunk silently and continue
+    setTimeout(function() {
+      _tamilSpeakChunks(chunks, idx + 1, btnId);
+    }, 60);
+  };
+
+  _ttsAudioEl.play().catch(function() {
+    // Autoplay blocked — try next chunk
+    setTimeout(function() {
+      _tamilSpeakChunks(chunks, idx + 1, btnId);
+    }, 60);
+  });
+}
+
+// ---------------------------------------------------------------
+//  NATIVE speechSynthesis for Hindi + English (chunked)
+// ---------------------------------------------------------------
+function _nativeSpeakChunk(chunks, idx, btnId) {
+  if (_ttsStopRequested || idx >= chunks.length) {
+    ttsActive = false;
+    activeBtnId = null;
+    if (btnId) setBtnState(btnId, false);
+    return;
+  }
+
+  ttsActive = true;
+  if (btnId) setBtnState(btnId, true, 'playing');
+
+  var u = new SpeechSynthesisUtterance(chunks[idx]);
   u.lang = lang;
   u.rate = 0.88;
   u.pitch = 1.0;
   u.volume = 1.0;
 
-  u.onstart = function() {
-    ttsActive = true;
-    if (btnId) setBtnState(btnId, true, 'playing');
-  };
-
   u.onend = function() {
-    if (!_ttsStopRequested) {
-      _ttsChunkIdx = idx + 1;
-      // Small gap between chunks (helps browser reset between Tamil sentences)
-      setTimeout(function() {
-        _speakChunk(chunks, idx + 1, btnId);
-      }, 80);
-    }
+    if (_ttsStopRequested) return;
+    setTimeout(function() {
+      _nativeSpeakChunk(chunks, idx + 1, btnId);
+    }, 60);
   };
 
   u.onerror = function(e) {
     if (e.error === 'interrupted' || e.error === 'canceled') return;
-    // Skip failed chunk and continue
-    if (!_ttsStopRequested) {
-      setTimeout(function() {
-        _speakChunk(chunks, idx + 1, btnId);
-      }, 80);
-    }
+    if (_ttsStopRequested) return;
+    setTimeout(function() {
+      _nativeSpeakChunk(chunks, idx + 1, btnId);
+    }, 60);
   };
 
   window.speechSynthesis.speak(u);
 }
 
+// ---------------------------------------------------------------
+//  Main entry point
+// ---------------------------------------------------------------
 function speakText(text, btnId) {
   if (!text || !text.trim()) return;
 
@@ -2020,38 +2063,40 @@ function speakText(text, btnId) {
 
   stopAllAudio();
 
-  if (!('speechSynthesis' in window)) {
-    showTextPopup(text);
-    return;
-  }
-
   activeBtnId = btnId;
   _ttsStopRequested = false;
   if (btnId) setBtnState(btnId, true, 'loading');
 
-  window.speechSynthesis.cancel();
+  var chunks = _splitChunks(text);
+  if (!chunks.length) { if (btnId) setBtnState(btnId, false); return; }
 
-  setTimeout(function() {
-    _ttsChunks = _splitChunks(text);
-    _ttsChunkIdx = 0;
-    if (_ttsChunks.length === 0) {
-      if (btnId) setBtnState(btnId, false);
-      return;
-    }
-    _speakChunk(_ttsChunks, 0, btnId);
-  }, 60);
+  if (lang === 'ta-IN') {
+    // Tamil: use Google Translate TTS audio directly (no proxy)
+    _tamilSpeakChunks(chunks, 0, btnId);
+  } else {
+    // English / Hindi: native speechSynthesis — instant, no network
+    if (!('speechSynthesis' in window)) { showTextPopup(text); return; }
+    window.speechSynthesis.cancel();
+    setTimeout(function() {
+      _nativeSpeakChunk(chunks, 0, btnId);
+    }, 50);
+  }
 }
 
 function stopAllAudio() {
   _ttsStopRequested = true;
-  _ttsChunks = [];
-  _ttsChunkIdx = 0;
+  // Stop Tamil audio element
+  if (_ttsAudioEl) {
+    try { _ttsAudioEl.pause(); _ttsAudioEl.src = ''; } catch(e) {}
+  }
+  // Stop native speech
   if ('speechSynthesis' in window) {
     try { window.speechSynthesis.cancel(); } catch(e) {}
   }
   ttsActive = false;
   if (activeBtnId) setBtnState(activeBtnId, false);
   activeBtnId = null;
+  _ttsChunks = []; _ttsChunkIdx = 0;
 }
 
 function setBtnState(btnId, on, state) {
