@@ -1916,71 +1916,136 @@ function speakMatrixQuestion(matrixType, btnId) {
 }
 
 /**
- * CORE TTS FUNCTION — Fixed version
- * Uses browser's native speechSynthesis for ALL languages (en-IN, ta-IN, hi-IN).
- * This eliminates the proxy/network delay completely.
- * Android Chrome has built-in Tamil and Hindi TTS voices via Google TTS engine.
+ * CORE TTS FUNCTION — Chunked version
+ * Splits text into small sentences and speaks them one by one.
+ * This fixes Tamil (and long Hindi/English) being silently cut off mid-way
+ * by the browser's speechSynthesis engine.
  */
+
+// Global chunk queue state
+var _ttsChunks = [];
+var _ttsChunkIdx = 0;
+var _ttsStopRequested = false;
+
+// Split text into small speakable chunks (by sentence punctuation + newlines)
+function _splitChunks(text) {
+  // Split on Tamil/Hindi/English sentence endings and newlines
+  var parts = text.split(/(?<=[.!?।\n])\s*/u);
+  var chunks = [], chunk = '';
+  for (var i = 0; i < parts.length; i++) {
+    var s = parts[i].trim();
+    if (!s) continue;
+    // Keep chunks under 120 chars so browser doesn't cut off Tamil
+    if ((chunk + ' ' + s).trim().length <= 120) {
+      chunk = (chunk + ' ' + s).trim();
+    } else {
+      if (chunk) chunks.push(chunk);
+      // If single sentence is > 120 chars, split further by comma/space
+      if (s.length > 120) {
+        var subparts = s.split(/(?<=[,;])\s*/u);
+        var sub = '';
+        for (var j = 0; j < subparts.length; j++) {
+          var sp = subparts[j].trim();
+          if (!sp) continue;
+          if ((sub + ' ' + sp).trim().length <= 120) {
+            sub = (sub + ' ' + sp).trim();
+          } else {
+            if (sub) chunks.push(sub);
+            sub = sp;
+          }
+        }
+        if (sub) chunks.push(sub);
+        chunk = '';
+      } else {
+        chunk = s;
+      }
+    }
+  }
+  if (chunk) chunks.push(chunk);
+  return chunks.filter(function(c){ return c.trim().length > 0; });
+}
+
+function _speakChunk(chunks, idx, btnId) {
+  if (_ttsStopRequested || idx >= chunks.length) {
+    // All done or stopped
+    ttsActive = false;
+    activeBtnId = null;
+    if (btnId) setBtnState(btnId, false);
+    return;
+  }
+
+  var chunkText = chunks[idx];
+  var u = new SpeechSynthesisUtterance(chunkText);
+  u.lang = lang;
+  u.rate = 0.88;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+
+  u.onstart = function() {
+    ttsActive = true;
+    if (btnId) setBtnState(btnId, true, 'playing');
+  };
+
+  u.onend = function() {
+    if (!_ttsStopRequested) {
+      _ttsChunkIdx = idx + 1;
+      // Small gap between chunks (helps browser reset between Tamil sentences)
+      setTimeout(function() {
+        _speakChunk(chunks, idx + 1, btnId);
+      }, 80);
+    }
+  };
+
+  u.onerror = function(e) {
+    if (e.error === 'interrupted' || e.error === 'canceled') return;
+    // Skip failed chunk and continue
+    if (!_ttsStopRequested) {
+      setTimeout(function() {
+        _speakChunk(chunks, idx + 1, btnId);
+      }, 80);
+    }
+  };
+
+  window.speechSynthesis.speak(u);
+}
+
 function speakText(text, btnId) {
   if (!text || !text.trim()) return;
 
-  // If already playing the same button, stop (toggle off)
+  // Toggle off if same button clicked again
   if (ttsActive && activeBtnId === btnId && btnId) {
     stopAllAudio();
     return;
   }
 
-  // Stop any currently playing audio first
   stopAllAudio();
 
   if (!('speechSynthesis' in window)) {
-    // Fallback: show text popup if browser doesn't support TTS
     showTextPopup(text);
     return;
   }
 
   activeBtnId = btnId;
+  _ttsStopRequested = false;
   if (btnId) setBtnState(btnId, true, 'loading');
 
-  // Cancel any queued speech
   window.speechSynthesis.cancel();
 
-  // Small delay ensures cancel() takes effect before new utterance
   setTimeout(function() {
-    var utterance = new SpeechSynthesisUtterance(text);
-
-    // Set correct language tag — Android Chrome uses this to pick the right voice
-    utterance.lang = lang; // 'en-IN', 'ta-IN', or 'hi-IN'
-    utterance.rate = 0.88;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-
-    utterance.onstart = function() {
-      ttsActive = true;
-      if (btnId) setBtnState(btnId, true, 'playing');
-    };
-
-    utterance.onend = function() {
-      ttsActive = false;
-      activeBtnId = null;
+    _ttsChunks = _splitChunks(text);
+    _ttsChunkIdx = 0;
+    if (_ttsChunks.length === 0) {
       if (btnId) setBtnState(btnId, false);
-    };
-
-    utterance.onerror = function(e) {
-      ttsActive = false;
-      activeBtnId = null;
-      if (btnId) setBtnState(btnId, false);
-      // Only show popup for non-interruption errors
-      if (e.error !== 'interrupted' && e.error !== 'canceled') {
-        showTextPopup(text);
-      }
-    };
-
-    window.speechSynthesis.speak(utterance);
-  }, 50);
+      return;
+    }
+    _speakChunk(_ttsChunks, 0, btnId);
+  }, 60);
 }
 
 function stopAllAudio() {
+  _ttsStopRequested = true;
+  _ttsChunks = [];
+  _ttsChunkIdx = 0;
   if ('speechSynthesis' in window) {
     try { window.speechSynthesis.cancel(); } catch(e) {}
   }
