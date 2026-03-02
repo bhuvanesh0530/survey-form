@@ -1,0 +1,2504 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Midline Quantitative Survey - EmpowerHer </title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1565C0 0%,#0D47A1 100%);min-height:100vh;padding:20px;display:flex;align-items:flex-start;justify-content:center}
+    .container{max-width:720px;width:100%;background:white;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;margin:0 auto}
+    .header{background:linear-gradient(135deg,#1565C0 0%,#0D47A1 100%);color:white;padding:20px 25px;text-align:center}
+    .header h1{font-size:16px;font-weight:700;margin-bottom:2px;letter-spacing:0.5px}
+    .header h2{font-size:13px;font-weight:400;opacity:0.9;margin-bottom:4px}
+    .header p{font-size:11px;opacity:0.75}
+    .form-body{padding:20px 25px}
+    .consent-box{background:#FFF8E1;border:2px solid #F9A825;border-radius:12px;padding:16px;margin-bottom:18px}
+    .consent-box h3{color:#E65100;font-size:13px;margin-bottom:8px}
+    .consent-text{font-size:12px;color:#333;line-height:1.6;margin-bottom:12px;white-space:pre-wrap}
+    .consent-audio-btn{background:#F9A825;color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+    .consent-audio-btn.playing{background:#e53935;animation:pulse 1s infinite}
+    .consent-options{display:flex;gap:10px;flex-wrap:wrap}
+    .consent-opt{display:flex;align-items:center;gap:7px;padding:9px 14px;border:2px solid #e0e0e0;border-radius:10px;cursor:pointer;transition:all .2s;font-size:13px}
+    .consent-opt:hover{border-color:#1565C0;background:#E3F2FD}
+    .consent-opt.selected{border-color:#1565C0;background:#E3F2FD;font-weight:600}
+    .consent-opt input{width:16px;height:16px;accent-color:#1565C0}
+    .consent-opt-audio{background:#1565C0;color:white;border:none;border-radius:50%;width:26px;height:26px;min-width:26px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px}
+    .consent-opt-audio:hover{background:#0D47A1}
+    .section-block{margin-bottom:6px;margin-top:22px}
+    .section-title{font-size:13px;font-weight:700;color:#1565C0;padding:8px 12px;background:#E3F2FD;border-left:4px solid #1565C0;border-radius:0 8px 8px 0;margin-bottom:14px}
+    .section-subtitle{font-size:11px;color:#666;margin-top:2px;padding-left:12px;margin-bottom:10px}
+    .q-block{margin-bottom:18px;display:block}
+    .q-block.hidden{display:none}
+    .section-block.hidden{display:none}
+    .q-header{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+    .q-number{font-size:11px;color:#1565C0;font-weight:700;min-width:32px;padding-top:2px}
+    .q-text{font-size:13px;font-weight:600;color:#333;flex:1;line-height:1.4}
+    .q-audio-hint{font-size:10px;color:#888;margin-top:2px;font-style:italic}
+    .btn-audio{background:linear-gradient(135deg,#1565C0,#0D47A1);color:white;border:none;border-radius:50%;width:34px;height:34px;min-width:34px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;margin-top:0}
+    .btn-audio:hover{transform:scale(1.1)}
+    .btn-audio.playing{background:#e53935;animation:pulse 1s infinite}
+    .btn-audio.loading{background:#f59e0b;animation:pulse .5s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .input-row{display:flex;gap:8px;align-items:stretch}
+    .dual-input{display:flex;gap:8px;flex:1}
+    input[type=text],input[type=tel],input[type=number]{flex:1;padding:10px;border:2px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;transition:border-color .2s}
+    input:focus{border-color:#1565C0}
+    .inp-lbl{font-size:10px;color:#888;text-align:center;margin-top:3px}
+    .btn-mic{padding:10px 13px;background:linear-gradient(135deg,#1565C0,#0D47A1);color:white;border:none;border-radius:10px;cursor:pointer;font-size:17px;min-width:48px;display:flex;align-items:center;justify-content:center}
+    .btn-mic.recording{background:#e53935;animation:pulse 1s infinite}
+    .options-list{display:flex;flex-direction:column;gap:7px}
+    .opt-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:10px;cursor:pointer;transition:all .2s}
+    .opt-item:hover{border-color:#1565C0;background:#f0f4ff}
+    .opt-item.selected{border-color:#1565C0;background:#E3F2FD}
+    .opt-item input[type=radio],.opt-item input[type=checkbox]{width:16px;height:16px;accent-color:#1565C0;flex-shrink:0}
+    .opt-label{flex:1;font-size:13px;color:#333}
+    .opt-audio{background:#1565C0;color:white;border:none;border-radius:50%;width:26px;height:26px;min-width:26px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .opt-audio:hover{background:#0D47A1}
+    .other-specify-box{margin-top:8px;padding:10px;background:#f9f9f9;border:1px dashed #ccc;border-radius:8px;display:none}
+    .other-specify-box.visible{display:block}
+    .other-specify-box label{font-size:12px;color:#555;margin-bottom:5px;display:block}
+    .matrix-wrap{overflow-x:auto}
+    .matrix-table{width:100%;border-collapse:collapse;font-size:12px}
+    .matrix-table th{background:#1565C0;color:white;padding:8px 10px;text-align:center}
+    .matrix-table th.row-header{text-align:left;min-width:160px}
+    .matrix-table td{padding:8px 10px;border:1px solid #e0e0e0;text-align:center}
+    .matrix-table tr:nth-child(even) td{background:#f8f9ff}
+    .matrix-table td.row-label{text-align:left;font-weight:500;color:#333}
+    .matrix-table td input{width:16px;height:16px;accent-color:#1565C0}
+    .matrix-table td input[type=number]{width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center}
+    .num-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .num-item label{font-size:12px;color:#555;display:block;margin-bottom:4px}
+    .num-item input{width:100%;padding:8px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px}
+    .meta-box{background:#E8F5E9;border:1px solid #A5D6A7;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#2E7D32}
+    .btn-submit{width:100%;padding:14px;margin-top:16px;background:linear-gradient(135deg,#1B5E20,#2E7D32);color:white;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s}
+    .btn-submit:hover{transform:translateY(-2px)}
+    .btn-submit:disabled{background:#ccc;cursor:not-allowed;transform:none}
+    .status{text-align:center;padding:13px;margin-top:12px;border-radius:10px;display:none;font-size:14px;font-weight:500;white-space:pre-line}
+    .status.success{background:#d4edda;color:#155724;display:block}
+    .status.error{background:#f8d7da;color:#721c24;display:block}
+    .status.loading{background:#d1ecf1;color:#0c5460;display:block}
+    .lang-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+    .lang-btn{padding:9px 20px;border:2px solid #1565C0;border-radius:10px;cursor:pointer;font-size:14px;background:white;color:#1565C0;font-weight:600;transition:all .2s}
+    .lang-btn.active{background:#1565C0;color:white}
+    #tts-popup{position:fixed;bottom:20px;left:5%;right:5%;background:#0D47A1;color:white;padding:16px 20px;border-radius:14px;font-size:15px;text-align:center;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.5);line-height:1.6;display:none;font-weight:500}
+    #submit-overlay{display:none;position:fixed;inset:0;background:rgba(13,71,161,0.92);z-index:99999;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px}
+    #submit-overlay.visible{display:flex}
+    .overlay-spinner{width:64px;height:64px;border:6px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:24px}
+    .overlay-msg{color:#fff;font-size:18px;font-weight:600;line-height:1.6;margin-bottom:8px}
+    .overlay-submsg{color:rgba(255,255,255,0.75);font-size:13px}
+    .thankyou-wrap{padding:40px 24px;text-align:center}
+    .thankyou-icon{font-size:80px;margin-bottom:12px;line-height:1}
+    .thankyou-org{font-size:13px;font-weight:700;color:#1565C0;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px}
+    .thankyou-heading{font-size:26px;font-weight:800;color:#1B5E20;margin-bottom:10px}
+    .thankyou-sub{font-size:15px;color:#444;line-height:1.8;margin-bottom:24px}
+    .thankyou-card{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:16px;padding:20px 24px;margin-bottom:24px}
+    .thankyou-card p{font-size:13px;color:#1565C0;line-height:1.8;font-weight:500}
+    .thankyou-divider{border:none;border-top:2px dashed #ccc;margin:20px 0}
+    .thankyou-footer{font-size:12px;color:#888;line-height:1.7}
+    .thankyou-stars{font-size:32px;letter-spacing:6px;margin-top:16px}
+    .scale-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+    .scale-btn{padding:7px 12px;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;font-size:12px;background:white;transition:all .2s;display:flex;align-items:center;gap:5px}
+    .scale-btn:hover{border-color:#1565C0;background:#E3F2FD}
+    .scale-btn.selected{border-color:#1565C0;background:#1565C0;color:white}
+    .scale-btn input{width:14px;height:14px;accent-color:#1565C0}
+    @media(max-width:500px){.dual-input{flex-direction:column}.form-body{padding:16px}.num-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<div id="submit-overlay">
+  <div class="overlay-spinner" id="overlay-spinner"></div>
+  <div class="overlay-msg" id="overlay-msg">⏳ Submitting your survey…</div>
+  <div class="overlay-submsg" id="overlay-submsg">Please wait. Do not close this page.</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>MIDLINE QUANTITATIVE SURVEY - EmpowerHer</h1>
+    <h2>Hand in Hand India — SHG Women, CLN Members &amp; Enterprises</h2>
+    <p>Confidential | For Research Purposes Only</p>
+  </div>
+  <div class="form-body" id="appBody">
+
+    <!-- STEP 1: Language -->
+    <div id="stepLang">
+      <div class="section-title">🌐 Select Language / மொழியை தேர்ந்தெடுக்கவும் / भाषा चुनें</div>
+      <div class="lang-bar">
+        <button class="lang-btn active" id="btn-lang-en" onclick="selectLang('en-IN')">English</button>
+        <button class="lang-btn" id="btn-lang-ta" onclick="selectLang('ta-IN')">தமிழ் (Tamil)</button>
+        <button class="lang-btn" id="btn-lang-hi" onclick="selectLang('hi-IN')">हिन्दी (Hindi)</button>
+      </div>
+      <button class="btn-submit" style="margin-top:0;background:linear-gradient(135deg,#1565C0,#0D47A1)" onclick="showConsent()">▶ Continue / தொடர்க / जारी रखें</button>
+    </div>
+
+    <!-- STEP 2: Consent -->
+    <div id="stepConsent" style="display:none">
+      <div class="consent-box">
+        <h3 id="consentTitle">📜 Informed Consent</h3>
+        <button class="consent-audio-btn" id="btn-consent-audio" onclick="toggleConsentAudio()">
+          🔊 <span id="consentAudioLabel">Listen to Consent</span>
+        </button>
+        <div class="consent-text" id="consentText"></div>
+        <div class="consent-options">
+          <label class="consent-opt" id="consentYesOpt" onclick="selectConsent('yes')">
+            <input type="radio" name="consent" value="yes" id="consentYes">
+            <span id="consentYesLabel">✅ Yes, I agree</span>
+            <button class="consent-opt-audio" onclick="event.stopPropagation();event.preventDefault();speakConsentOpt('consentYesLabel')" title="Listen">🔊</button>
+          </label>
+          <label class="consent-opt" id="consentNoOpt" onclick="selectConsent('no')">
+            <input type="radio" name="consent" value="no" id="consentNo">
+            <span id="consentNoLabel">❌ No, I do not agree</span>
+            <button class="consent-opt-audio" onclick="event.stopPropagation();event.preventDefault();speakConsentOpt('consentNoLabel')" title="Listen">🔊</button>
+          </label>
+        </div>
+      </div>
+
+      <!-- Aadhaar Consent -->
+      <div class="consent-box" id="aadhaarConsentBox" style="margin-top:12px">
+        <h3 id="aadhaarConsentTitle">🪪 Aadhaar Consent</h3>
+        <button class="consent-audio-btn" id="btn-aadhaar-consent-audio" onclick="toggleAadhaarConsentAudio()">
+          🔊 <span id="aadhaarConsentAudioLabel">Listen to Aadhaar Consent</span>
+        </button>
+        <div class="consent-text" id="aadhaarConsentText"></div>
+        <div class="consent-options">
+          <label class="consent-opt" id="aadhaarYesOpt" onclick="selectAadhaarConsent('yes')">
+            <input type="radio" name="aadhaarConsent" value="yes" id="aadhaarConsentYes">
+            <span id="aadhaarConsentYesLabel">✅ Yes, I consent</span>
+            <button class="consent-opt-audio" onclick="event.stopPropagation();event.preventDefault();speakConsentOpt('aadhaarConsentYesLabel')" title="Listen">🔊</button>
+          </label>
+          <label class="consent-opt" id="aadhaarNoOpt" onclick="selectAadhaarConsent('no')">
+            <input type="radio" name="aadhaarConsent" value="no" id="aadhaarConsentNo">
+            <span id="aadhaarConsentNoLabel">❌ No, I do not consent</span>
+            <button class="consent-opt-audio" onclick="event.stopPropagation();event.preventDefault();speakConsentOpt('aadhaarConsentNoLabel')" title="Listen">🔊</button>
+          </label>
+        </div>
+      </div>
+
+      <!-- Aadhaar Number (shown if consented) -->
+      <div class="q-block hidden" id="qAadhaarNumber" style="margin-top:12px">
+        <div class="q-header">
+          <span class="q-number">🪪</span>
+          <div style="flex:1"><div class="q-text" id="aadhaarNumLabel">Aadhaar Number</div></div>
+          <button class="btn-audio" id="btn-audio-aadhaar" onclick="speakText(getLbl('aadhaarNum'),'btn-audio-aadhaar')">🔊</button>
+        </div>
+        <div class="input-row">
+          <div class="dual-input">
+            <div style="flex:1"><input type="number" id="aadhaarText" placeholder="12-digit number" maxlength="12" oninput="if(this.value.length>12)this.value=this.value.slice(0,12)"><div class="inp-lbl">✏️ Type</div></div>
+            <div style="flex:1"><input type="text" id="aadhaarAudio" placeholder="Voice input..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+          </div>
+          <button class="btn-mic" id="mic-aadhaar" onclick="startMic('aadhaar')">🎤</button>
+        </div>
+      </div>
+      <button class="btn-submit" style="margin-top:12px;background:linear-gradient(135deg,#1565C0,#0D47A1)" onclick="proceedFromConsent()">▶ <span id="consentProceedLabel">Proceed</span></button>
+    </div>
+
+    <!-- STEP 3: Survey -->
+    <div id="stepSurvey" style="display:none">
+      <div class="meta-box" id="metaBox">📍 GPS: <span id="gpsDisplay">Capturing...</span> | 📅 Date: <span id="dateDisplay"></span></div>
+
+      <!-- METADATA -->
+      <div class="section-block">
+        <div class="section-title" id="secMetaTitle">📋 METADATA</div>
+
+        <div class="q-block" id="qState">
+          <div class="q-header">
+            <span class="q-number">M1</span>
+            <div style="flex:1"><div class="q-text" id="qStateText">State</div></div>
+            <button class="btn-audio" id="btn-audio-state" onclick="speakText(getLbl('state'),'btn-audio-state')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-state"></div>
+        </div>
+
+        <div class="q-block" id="qDistrict">
+          <div class="q-header">
+            <span class="q-number">M2</span>
+            <div style="flex:1"><div class="q-text" id="qDistrictText">District</div></div>
+            <button class="btn-audio" id="btn-audio-district" onclick="speakText(getLbl('district'),'btn-audio-district')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="districtText" placeholder="Type district..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="districtAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-district" onclick="startMic('district')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qBlock">
+          <div class="q-header">
+            <span class="q-number">M3</span>
+            <div style="flex:1"><div class="q-text" id="qBlockText">Block</div></div>
+            <button class="btn-audio" id="btn-audio-block" onclick="speakText(getLbl('block'),'btn-audio-block')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="blockText" placeholder="Type block..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="blockAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-block" onclick="startMic('block')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qPanchayat">
+          <div class="q-header">
+            <span class="q-number">M4</span>
+            <div style="flex:1"><div class="q-text" id="qPanchayatText">Panchayat</div></div>
+            <button class="btn-audio" id="btn-audio-panchayat" onclick="speakText(getLbl('panchayat'),'btn-audio-panchayat')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="panchayatText" placeholder="Type panchayat..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="panchayatAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-panchayat" onclick="startMic('panchayat')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qVillage">
+          <div class="q-header">
+            <span class="q-number">M5</span>
+            <div style="flex:1"><div class="q-text" id="qVillageText">Village</div></div>
+            <button class="btn-audio" id="btn-audio-village" onclick="speakText(getLbl('village'),'btn-audio-village')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="villageText" placeholder="Type village..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="villageAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-village" onclick="startMic('village')">🎤</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION A -->
+      <div class="section-block">
+        <div class="section-title" id="secATitle">👤 SECTION A: RESPONDENT PROFILE</div>
+
+        <div class="q-block" id="qName">
+          <div class="q-header">
+            <span class="q-number">A1</span>
+            <div style="flex:1"><div class="q-text" id="qNameText">Name of Respondent</div><div class="q-audio-hint">🔊 Speaker | 🎤 Microphone</div></div>
+            <button class="btn-audio" id="btn-audio-name" onclick="speakText(getLbl('name'),'btn-audio-name')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="nameText" placeholder="Type name..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="nameAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-name" onclick="startMic('name')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qAge">
+          <div class="q-header">
+            <span class="q-number">A2</span>
+            <div style="flex:1"><div class="q-text" id="qAgeText">Age of Respondent</div><div class="q-audio-hint">🔊 Speaker | 🎤 Microphone</div></div>
+            <button class="btn-audio" id="btn-audio-age" onclick="speakText(getLbl('age'),'btn-audio-age')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="number" id="ageText" placeholder="e.g. 32" min="15" max="90"><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="ageAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-age" onclick="startMic('age')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qGender">
+          <div class="q-header">
+            <span class="q-number">A3</span>
+            <div style="flex:1"><div class="q-text" id="qGenderText">Gender</div></div>
+            <button class="btn-audio" id="btn-audio-gender" onclick="speakQText('qGenderText','btn-audio-gender')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-gender"></div>
+        </div>
+
+        <div class="q-block" id="qMarital">
+          <div class="q-header">
+            <span class="q-number">A4</span>
+            <div style="flex:1"><div class="q-text" id="qMaritalText">Marital Status</div></div>
+            <button class="btn-audio" id="btn-audio-marital" onclick="speakQText('qMaritalText','btn-audio-marital')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-marital"></div>
+        </div>
+
+        <div class="q-block" id="qSocial">
+          <div class="q-header">
+            <span class="q-number">A5</span>
+            <div style="flex:1"><div class="q-text" id="qSocialText">Social Category</div></div>
+            <button class="btn-audio" id="btn-audio-social" onclick="speakQText('qSocialText','btn-audio-social')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-social"></div>
+        </div>
+
+        <div class="q-block" id="qReligion">
+          <div class="q-header">
+            <span class="q-number">A6</span>
+            <div style="flex:1"><div class="q-text" id="qReligionText">Religion</div></div>
+            <button class="btn-audio" id="btn-audio-religion" onclick="speakQText('qReligionText','btn-audio-religion')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-religion"></div>
+        </div>
+
+        <div class="q-block" id="qDisability">
+          <div class="q-header">
+            <span class="q-number">A7</span>
+            <div style="flex:1"><div class="q-text" id="qDisabilityText">Do you have any physical or mental disability?</div></div>
+            <button class="btn-audio" id="btn-audio-disability" onclick="speakQText('qDisabilityText','btn-audio-disability')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-disability"></div>
+        </div>
+
+        <div class="q-block" id="qHouseType">
+          <div class="q-header">
+            <span class="q-number">A8</span>
+            <div style="flex:1"><div class="q-text" id="qHouseTypeText">Type of House</div></div>
+            <button class="btn-audio" id="btn-audio-house" onclick="speakQText('qHouseTypeText','btn-audio-house')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-house"></div>
+        </div>
+
+        <div class="q-block" id="qFamilyMatrix">
+          <div class="q-header">
+            <span class="q-number">A9</span>
+            <div style="flex:1"><div class="q-text" id="qFamilyText">Family Members (number of people in each category)</div></div>
+            <button class="btn-audio" id="btn-audio-family" onclick="speakMatrixQuestion('family','btn-audio-family')">🔊</button>
+          </div>
+          <div class="matrix-wrap">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th class="row-header" id="famCatHeader">Category</th>
+                  <th><span id="famMaleHeader">Male</span></th>
+                  <th><span id="famFemaleHeader">Female</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="row-label"><span id="famBelow18">Below 18 years</span></td>
+                  <td><input type="number" id="familyBelow18Male" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                  <td><input type="number" id="familyBelow18Female" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                </tr>
+                <tr>
+                  <td class="row-label"><span id="fam18Above">18 years and above</span></td>
+                  <td><input type="number" id="family18AboveMale" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                  <td><input type="number" id="family18AboveFemale" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="q-block" id="qEducation">
+          <div class="q-header">
+            <span class="q-number">A10</span>
+            <div style="flex:1"><div class="q-text" id="qEducationText">Highest level of education completed</div></div>
+            <button class="btn-audio" id="btn-audio-education" onclick="speakQText('qEducationText','btn-audio-education')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-education"></div>
+        </div>
+
+        <div class="q-block" id="qPrimaryIncome">
+          <div class="q-header">
+            <span class="q-number">A11</span>
+            <div style="flex:1"><div class="q-text" id="qPrimaryIncomeText">Primary Source(s) of Family Income (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-primaryincome" onclick="speakQText('qPrimaryIncomeText','btn-audio-primaryincome')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-primaryincome"></div>
+          <div class="other-specify-box" id="other-primaryincome">
+            <label id="otherIncomeLabel">Please specify other income source:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="primaryIncomeOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="primaryIncomeOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-primaryIncomeOther" onclick="startMic('primaryIncomeOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qBusinessDetails">
+          <div class="q-header">
+            <span class="q-number">A11A</span>
+            <div style="flex:1"><div class="q-text" id="qBusinessDetailsText">Please provide details of your business/trade/service</div><div class="q-audio-hint">🔊 Speaker | 🎤 Microphone</div></div>
+            <button class="btn-audio" id="btn-audio-bizdetails" onclick="speakText(getLbl('businessDetails'),'btn-audio-bizdetails')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="text" id="businessDetailsText" placeholder="Type details..."><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="businessDetailsAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-businessDetails" onclick="startMic('businessDetails')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qMigration">
+          <div class="q-header">
+            <span class="q-number">A12</span>
+            <div style="flex:1"><div class="q-text" id="qMigrationText">Does any family member live outside the village for work?</div></div>
+            <button class="btn-audio" id="btn-audio-migration" onclick="speakQText('qMigrationText','btn-audio-migration')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-migration"></div>
+        </div>
+
+        <div class="q-block" id="qDocuments">
+          <div class="q-header">
+            <span class="q-number">A13</span>
+            <div style="flex:1"><div class="q-text" id="qDocumentsText">Which of the following documents do you have? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-documents" onclick="speakQText('qDocumentsText','btn-audio-documents')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-documents"></div>
+          <div class="other-specify-box" id="other-documents">
+            <label id="otherDocLabel">Please specify other document:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="documentsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="documentsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-documentsOther" onclick="startMic('documentsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qPhone">
+          <div class="q-header">
+            <span class="q-number">A14</span>
+            <div style="flex:1"><div class="q-text" id="qPhoneText">What type of phone do you have?</div></div>
+            <button class="btn-audio" id="btn-audio-phone" onclick="speakQText('qPhoneText','btn-audio-phone')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-phone"></div>
+        </div>
+
+        <div class="q-block" id="qMobile">
+          <div class="q-header">
+            <span class="q-number">A15</span>
+            <div style="flex:1"><div class="q-text" id="qMobileText">Mobile Number</div><div class="q-audio-hint">🔊 Speaker | 🎤 Microphone</div></div>
+            <button class="btn-audio" id="btn-audio-mobile" onclick="speakText(getLbl('mobile'),'btn-audio-mobile')">🔊</button>
+          </div>
+          <div class="input-row">
+            <div class="dual-input">
+              <div style="flex:1"><input type="tel" id="mobileText" placeholder="10-digit number" maxlength="10"><div class="inp-lbl">✏️ Type</div></div>
+              <div style="flex:1"><input type="text" id="mobileAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+            </div>
+            <button class="btn-mic" id="mic-mobile" onclick="startMic('mobile')">🎤</button>
+          </div>
+        </div>
+
+        <div class="q-block" id="qHIHMember">
+          <div class="q-header">
+            <span class="q-number">A16</span>
+            <div style="flex:1"><div class="q-text" id="qHIHMemberText">Are you a member of a Hand in Hand India (HIH) Self-Help Group?</div></div>
+            <button class="btn-audio" id="btn-audio-hihmember" onclick="speakQText('qHIHMemberText','btn-audio-hihmember')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-hihmember"></div>
+        </div>
+
+        <div class="q-block hidden" id="qHIHDuration">
+          <div class="q-header">
+            <span class="q-number">A17</span>
+            <div style="flex:1"><div class="q-text" id="qHIHDurationText">How long have you been associated with HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-hihduration" onclick="speakQText('qHIHDurationText','btn-audio-hihduration')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-hihduration"></div>
+        </div>
+
+        <div class="q-block" id="qCLN">
+          <div class="q-header">
+            <span class="q-number">A18</span>
+            <div style="flex:1"><div class="q-text" id="qCLNText">Are you a member of a Cluster Level Network (CLN)?</div></div>
+            <button class="btn-audio" id="btn-audio-cln" onclick="speakQText('qCLNText','btn-audio-cln')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-cln"></div>
+        </div>
+      </div>
+
+      <!-- SECTION B -->
+      <div class="section-block">
+        <div class="section-title" id="secBTitle">💰 SECTION B: INCOME &amp; FINANCIAL STATUS</div>
+
+        <div class="q-block" id="qMonthlyIncome">
+          <div class="q-header">
+            <span class="q-number">B19</span>
+            <div style="flex:1"><div class="q-text" id="qMonthlyIncomeText">What is the approximate monthly household income?</div></div>
+            <button class="btn-audio" id="btn-audio-monthlyincome" onclick="speakQText('qMonthlyIncomeText','btn-audio-monthlyincome')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-monthlyincome"></div>
+        </div>
+
+        <div class="q-block" id="qIncomeIncrease">
+          <div class="q-header">
+            <span class="q-number">B20</span>
+            <div style="flex:1"><div class="q-text" id="qIncomeIncreaseText">Has your household income increased in the past 2 years?</div></div>
+            <button class="btn-audio" id="btn-audio-incomeincrease" onclick="speakQText('qIncomeIncreaseText','btn-audio-incomeincrease')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-incomeincrease"></div>
+        </div>
+
+        <div class="q-block hidden" id="qIncreasePct">
+          <div class="q-header">
+            <span class="q-number">B21</span>
+            <div style="flex:1"><div class="q-text" id="qIncreasePctText">By approximately what percentage has your income increased?</div></div>
+            <button class="btn-audio" id="btn-audio-increasepct" onclick="speakQText('qIncreasePctText','btn-audio-increasepct')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-increasepct"></div>
+        </div>
+
+        <div class="q-block" id="qContributes">
+          <div class="q-header">
+            <span class="q-number">B22</span>
+            <div style="flex:1"><div class="q-text" id="qContributesText">Do you personally contribute to the household income?</div></div>
+            <button class="btn-audio" id="btn-audio-contributes" onclick="speakQText('qContributesText','btn-audio-contributes')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-contributes"></div>
+        </div>
+
+        <div class="q-block hidden" id="qContributionPct">
+          <div class="q-header">
+            <span class="q-number">B23</span>
+            <div style="flex:1"><div class="q-text" id="qContributionPctText">What percentage of household income do you contribute?</div></div>
+            <button class="btn-audio" id="btn-audio-contributionpct" onclick="speakQText('qContributionPctText','btn-audio-contributionpct')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-contributionpct"></div>
+        </div>
+
+        <div class="q-block" id="qSaves">
+          <div class="q-header">
+            <span class="q-number">B24</span>
+            <div style="flex:1"><div class="q-text" id="qSavesText">Do you save a portion of your income regularly?</div></div>
+            <button class="btn-audio" id="btn-audio-saves" onclick="speakQText('qSavesText','btn-audio-saves')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-saves"></div>
+        </div>
+
+        <div class="q-block hidden" id="qSavingsLocation">
+          <div class="q-header">
+            <span class="q-number">B25</span>
+            <div style="flex:1"><div class="q-text" id="qSavingsLocationText">Where do you keep your savings? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-savingslocation" onclick="speakQText('qSavingsLocationText','btn-audio-savingslocation')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-savingslocation"></div>
+          <div class="other-specify-box" id="other-savingslocation">
+            <label id="otherSavingsLabel">Please specify other savings location:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="savingsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="savingsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-savingsOther" onclick="startMic('savingsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION C -->
+      <div class="section-block">
+        <div class="section-title" id="secCTitle">📚 SECTION C: TRAINING &amp; CAPACITY BUILDING</div>
+
+        <div class="q-block" id="qSHGTraining">
+          <div class="q-header">
+            <span class="q-number">C26</span>
+            <div style="flex:1"><div class="q-text" id="qSHGTrainingText">Have you attended SHG Management Training conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-shgtraining" onclick="speakQText('qSHGTrainingText','btn-audio-shgtraining')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-shgtraining"></div>
+        </div>
+
+        <div class="q-block hidden" id="qSHGTopics">
+          <div class="q-header">
+            <span class="q-number">C27</span>
+            <div style="flex:1"><div class="q-text" id="qSHGTopicsText">Which topics were covered in the SHG training? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-shgtopics" onclick="speakQText('qSHGTopicsText','btn-audio-shgtopics')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-shgtopics"></div>
+          <div class="other-specify-box" id="other-shgtopics">
+            <label id="otherSHGTopicLabel">Please specify other topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="shgTopicsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="shgTopicsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-shgTopicsOther" onclick="startMic('shgTopicsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qSHGUseful">
+          <div class="q-header">
+            <span class="q-number">C28</span>
+            <div style="flex:1"><div class="q-text" id="qSHGUsefulText">Which SHG training topics were most useful to you? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-shguseful" onclick="speakQText('qSHGUsefulText','btn-audio-shguseful')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-shguseful"></div>
+          <div class="other-specify-box" id="other-shguseful">
+            <label id="otherSHGUsefulLabel">Please specify other useful topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="shgUsefulOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="shgUsefulOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-shgUsefulOther" onclick="startMic('shgUsefulOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qSHGPerformance">
+          <div class="q-header">
+            <span class="q-number">C29</span>
+            <div style="flex:1"><div class="q-text" id="qSHGPerfText">How has the SHG's performance changed after the training?</div></div>
+            <button class="btn-audio" id="btn-audio-shgperf" onclick="speakQText('qSHGPerfText','btn-audio-shgperf')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-shgperf"></div>
+        </div>
+
+        <div class="q-block" id="qFinLit">
+          <div class="q-header">
+            <span class="q-number">C30</span>
+            <div style="flex:1"><div class="q-text" id="qFinLitText">Have you attended Financial Literacy Training conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-finlit" onclick="speakQText('qFinLitText','btn-audio-finlit')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-finlit"></div>
+        </div>
+
+        <div class="q-block hidden" id="qFinLitTopics">
+          <div class="q-header">
+            <span class="q-number">C31</span>
+            <div style="flex:1"><div class="q-text" id="qFinLitTopicsText">Which topics were covered in Financial Literacy training? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-finlittopics" onclick="speakQText('qFinLitTopicsText','btn-audio-finlittopics')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-finlittopics"></div>
+          <div class="other-specify-box" id="other-finlittopics">
+            <label>Please specify other topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="finLitTopicsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="finLitTopicsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-finLitTopicsOther" onclick="startMic('finLitTopicsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qFinLitUseful">
+          <div class="q-header">
+            <span class="q-number">C32</span>
+            <div style="flex:1"><div class="q-text" id="qFinLitUsefulText">Which Financial Literacy topics were most useful? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-finlituseful" onclick="speakQText('qFinLitUsefulText','btn-audio-finlituseful')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-finlituseful"></div>
+          <div class="other-specify-box" id="other-finlituseful">
+            <label>Please specify other useful topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="finLitUsefulOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="finLitUsefulOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-finLitUsefulOther" onclick="startMic('finLitUsefulOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qDigital">
+          <div class="q-header">
+            <span class="q-number">C33</span>
+            <div style="flex:1"><div class="q-text" id="qDigitalText">Have you attended Digital Literacy Training conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-digital" onclick="speakQText('qDigitalText','btn-audio-digital')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-digital"></div>
+        </div>
+
+        <div class="q-block hidden" id="qDigitalTopics">
+          <div class="q-header">
+            <span class="q-number">C34</span>
+            <div style="flex:1"><div class="q-text" id="qDigitalTopicsText">Which topics were covered in Digital Literacy training? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-digitaltopics" onclick="speakQText('qDigitalTopicsText','btn-audio-digitaltopics')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-digitaltopics"></div>
+          <div class="other-specify-box" id="other-digitaltopics">
+            <label>Please specify other topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="digitalTopicsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="digitalTopicsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-digitalTopicsOther" onclick="startMic('digitalTopicsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qDigitalUseful">
+          <div class="q-header">
+            <span class="q-number">C35</span>
+            <div style="flex:1"><div class="q-text" id="qDigitalUsefulText">Which Digital Literacy topics were most useful? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-digitaluseful" onclick="speakQText('qDigitalUsefulText','btn-audio-digitaluseful')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-digitaluseful"></div>
+          <div class="other-specify-box" id="other-digitaluseful">
+            <label>Please specify other useful topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="digitalUsefulOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="digitalUsefulOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-digitalUsefulOther" onclick="startMic('digitalUsefulOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qBMT">
+          <div class="q-header">
+            <span class="q-number">C36</span>
+            <div style="flex:1"><div class="q-text" id="qBMTText">Have you attended Business Motivation Training (BMT) conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-bmt" onclick="speakQText('qBMTText','btn-audio-bmt')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bmt"></div>
+        </div>
+
+        <div class="q-block hidden" id="qBMTTopics">
+          <div class="q-header">
+            <span class="q-number">C37</span>
+            <div style="flex:1"><div class="q-text" id="qBMTTopicsText">Which topics were covered in BMT? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-bmttopics" onclick="speakQText('qBMTTopicsText','btn-audio-bmttopics')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bmttopics"></div>
+          <div class="other-specify-box" id="other-bmttopics">
+            <label>Please specify other topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="bmtTopicsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="bmtTopicsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-bmtTopicsOther" onclick="startMic('bmtTopicsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qBMTUseful">
+          <div class="q-header">
+            <span class="q-number">C38</span>
+            <div style="flex:1"><div class="q-text" id="qBMTUsefulText">Which BMT topics were most useful? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-bmtuseful" onclick="speakQText('qBMTUsefulText','btn-audio-bmtuseful')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bmtuseful"></div>
+          <div class="other-specify-box" id="other-bmtuseful">
+            <label>Please specify other useful topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="bmtUsefulOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="bmtUsefulOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-bmtUsefulOther" onclick="startMic('bmtUsefulOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qBDT">
+          <div class="q-header">
+            <span class="q-number">C39</span>
+            <div style="flex:1"><div class="q-text" id="qBDTText">Have you attended Business Development Training (BDT) conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-bdt" onclick="speakQText('qBDTText','btn-audio-bdt')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bdt"></div>
+        </div>
+
+        <div class="q-block hidden" id="qBDTTopics">
+          <div class="q-header">
+            <span class="q-number">C40</span>
+            <div style="flex:1"><div class="q-text" id="qBDTTopicsText">Which topics were covered in BDT? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-bdttopics" onclick="speakQText('qBDTTopicsText','btn-audio-bdttopics')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bdttopics"></div>
+          <div class="other-specify-box" id="other-bdttopics">
+            <label>Please specify other topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="bdtTopicsOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="bdtTopicsOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-bdtTopicsOther" onclick="startMic('bdtTopicsOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qBDTUseful">
+          <div class="q-header">
+            <span class="q-number">C41</span>
+            <div style="flex:1"><div class="q-text" id="qBDTUsefulText">Which BDT topics were most useful? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-bdtuseful" onclick="speakQText('qBDTUsefulText','btn-audio-bdtuseful')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-bdtuseful"></div>
+          <div class="other-specify-box" id="other-bdtuseful">
+            <label>Please specify other useful topic:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="bdtUsefulOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="bdtUsefulOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-bdtUsefulOther" onclick="startMic('bdtUsefulOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qSkillTraining">
+          <div class="q-header">
+            <span class="q-number">C42</span>
+            <div style="flex:1"><div class="q-text" id="qSkillTrainingText">Have you attended any Skill Training conducted by HIH India?</div></div>
+            <button class="btn-audio" id="btn-audio-skilltraining" onclick="speakQText('qSkillTrainingText','btn-audio-skilltraining')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-skilltraining"></div>
+        </div>
+
+        <div class="q-block hidden" id="qSkillTypes">
+          <div class="q-header">
+            <span class="q-number">C42A</span>
+            <div style="flex:1"><div class="q-text" id="qSkillTypesText">What type of skill training did you attend? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-skilltypes" onclick="speakQText('qSkillTypesText','btn-audio-skilltypes')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-skilltypes"></div>
+        </div>
+
+        <div class="q-block hidden" id="qSkillRevenue">
+          <div class="q-header">
+            <span class="q-number">C43</span>
+            <div style="flex:1"><div class="q-text" id="qSkillRevenueText">Are you using that skill to generate revenue?</div></div>
+            <button class="btn-audio" id="btn-audio-skillrevenue" onclick="speakQText('qSkillRevenueText','btn-audio-skillrevenue')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-skillrevenue"></div>
+        </div>
+
+        <div class="q-block hidden" id="qHIHSupport">
+          <div class="q-header">
+            <span class="q-number">C44</span>
+            <div style="flex:1"><div class="q-text" id="qHIHSupportText">What support have you received from HIH India? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-hihsupport" onclick="speakQText('qHIHSupportText','btn-audio-hihsupport')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-hihsupport"></div>
+          <div class="other-specify-box" id="other-hihsupport">
+            <label>Please specify other support:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="hihSupportOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="hihSupportOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-hihSupportOther" onclick="startMic('hihSupportOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block hidden" id="qUsefulSupport">
+          <div class="q-header">
+            <span class="q-number">C45</span>
+            <div style="flex:1"><div class="q-text" id="qUsefulSupportText">Which support from HIH India was most useful? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-usefulsupport" onclick="speakQText('qUsefulSupportText','btn-audio-usefulsupport')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-usefulsupport"></div>
+          <div class="other-specify-box" id="other-usefulsupport">
+            <label>Please specify other useful support:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="usefulSupportOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="usefulSupportOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-usefulSupportOther" onclick="startMic('usefulSupportOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="q-block" id="qFollowup">
+          <div class="q-header">
+            <span class="q-number">C46</span>
+            <div style="flex:1"><div class="q-text" id="qFollowupText">After receiving support/training from HIH India, what follow-up activities did you undertake? (Select all that apply)</div></div>
+            <button class="btn-audio" id="btn-audio-followup" onclick="speakQText('qFollowupText','btn-audio-followup')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-followup"></div>
+          <div class="other-specify-box" id="other-followup">
+            <label>Please specify other activity:</label>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="followupOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="followupOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-followupOther" onclick="startMic('followupOther')">🎤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION D -->
+      <div class="section-block">
+        <div class="section-title" id="secDTitle">🏭 SECTION D: ENTERPRISE DETAILS</div>
+
+        <div class="q-block" id="qOwnsEnterprise">
+          <div class="q-header">
+            <span class="q-number">D47</span>
+            <div style="flex:1"><div class="q-text" id="qOwnsEnterpriseText">Do you own or run an enterprise/business?</div></div>
+            <button class="btn-audio" id="btn-audio-ownsent" onclick="speakQText('qOwnsEnterpriseText','btn-audio-ownsent')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-ownsent"></div>
+        </div>
+
+        <div class="section-block hidden" id="sectionDEnterprise">
+
+          <div class="q-block" id="qEntSubtype">
+            <div class="q-header">
+              <span class="q-number">D47A</span>
+              <div style="flex:1"><div class="q-text" id="qEntSubtypeText">Is this a Family-Based Enterprise (FBE) or Micro Enterprise (ME)?</div></div>
+              <button class="btn-audio" id="btn-audio-entsubtype" onclick="speakQText('qEntSubtypeText','btn-audio-entsubtype')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-entsubtype"></div>
+          </div>
+
+          <div class="q-block" id="qEntStarted">
+            <div class="q-header">
+              <span class="q-number">D48</span>
+              <div style="flex:1"><div class="q-text" id="qEntStartedText">When did you start this enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-entstarted" onclick="speakQText('qEntStartedText','btn-audio-entstarted')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-entstarted"></div>
+          </div>
+
+          <div class="q-block" id="qEntType">
+            <div class="q-header">
+              <span class="q-number">D49</span>
+              <div style="flex:1"><div class="q-text" id="qEntTypeText">What type of enterprise is it?</div></div>
+              <button class="btn-audio" id="btn-audio-enttype" onclick="speakQText('qEntTypeText','btn-audio-enttype')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-enttype"></div>
+            <div class="other-specify-box" id="other-enttype">
+              <label>Please specify enterprise type:</label>
+              <div class="input-row">
+                <div class="dual-input">
+                  <div style="flex:1"><input type="text" id="enterpriseTypeOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                  <div style="flex:1"><input type="text" id="enterpriseTypeOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+                </div>
+                <button class="btn-mic" id="mic-enterpriseTypeOther" onclick="startMic('enterpriseTypeOther')">🎤</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="q-block" id="qProducts">
+            <div class="q-header">
+              <span class="q-number">D50</span>
+              <div style="flex:1"><div class="q-text" id="qProductsText">What are the main products or services of your enterprise?</div><div class="q-audio-hint">🔊 Speaker | 🎤 Microphone</div></div>
+              <button class="btn-audio" id="btn-audio-products" onclick="speakText(getLbl('products'),'btn-audio-products')">🔊</button>
+            </div>
+            <div class="input-row">
+              <div class="dual-input">
+                <div style="flex:1"><input type="text" id="productsText" placeholder="Type products/services..."><div class="inp-lbl">✏️ Type</div></div>
+                <div style="flex:1"><input type="text" id="productsAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+              </div>
+              <button class="btn-mic" id="mic-products" onclick="startMic('products')">🎤</button>
+            </div>
+          </div>
+
+          <div class="q-block" id="qOwnership">
+            <div class="q-header">
+              <span class="q-number">D51</span>
+              <div style="flex:1"><div class="q-text" id="qOwnershipText">Type of Ownership</div></div>
+              <button class="btn-audio" id="btn-audio-ownership" onclick="speakQText('qOwnershipText','btn-audio-ownership')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-ownership"></div>
+          </div>
+
+          <div class="q-block" id="qMemberRole">
+            <div class="q-header">
+              <span class="q-number">D52</span>
+              <div style="flex:1"><div class="q-text" id="qMemberRoleText">What is your role in the enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-memberrole" onclick="speakQText('qMemberRoleText','btn-audio-memberrole')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-memberrole"></div>
+          </div>
+
+          <div class="q-block" id="qRegistered">
+            <div class="q-header">
+              <span class="q-number">D53</span>
+              <div style="flex:1"><div class="q-text" id="qRegisteredText">Is the enterprise formally registered? (e.g. Udyam, FSSAI, Shop Act)</div></div>
+              <button class="btn-audio" id="btn-audio-registered" onclick="speakQText('qRegisteredText','btn-audio-registered')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-registered"></div>
+          </div>
+
+          <div class="q-block hidden" id="qEntIncomeUp">
+            <div class="q-header">
+              <span class="q-number">D54</span>
+              <div style="flex:1"><div class="q-text" id="qEntIncomeUpText">Has the enterprise income increased after registration?</div></div>
+              <button class="btn-audio" id="btn-audio-entincomeup" onclick="speakQText('qEntIncomeUpText','btn-audio-entincomeup')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-entincomeup"></div>
+          </div>
+
+          <div class="q-block hidden" id="qEntIncomePct">
+            <div class="q-header">
+              <span class="q-number">D55</span>
+              <div style="flex:1"><div class="q-text" id="qEntIncomePctText">By approximately what percentage has enterprise income increased?</div></div>
+              <button class="btn-audio" id="btn-audio-entincomepct" onclick="speakQText('qEntIncomePctText','btn-audio-entincomepct')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-entincomepct"></div>
+          </div>
+
+          <div class="q-block" id="qOpsFreq">
+            <div class="q-header">
+              <span class="q-number">D56</span>
+              <div style="flex:1"><div class="q-text" id="qOpsFreqText">How frequently does the enterprise operate?</div></div>
+              <button class="btn-audio" id="btn-audio-opsfreq" onclick="speakQText('qOpsFreqText','btn-audio-opsfreq')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-opsfreq"></div>
+          </div>
+
+          <div class="q-block" id="qCurrInvest">
+            <div class="q-header">
+              <span class="q-number">D57</span>
+              <div style="flex:1"><div class="q-text" id="qCurrInvestText">What is the current total investment in the enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-currinvest" onclick="speakQText('qCurrInvestText','btn-audio-currinvest')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-currinvest"></div>
+          </div>
+
+          <div class="q-block" id="qInvest2yr">
+            <div class="q-header">
+              <span class="q-number">D58</span>
+              <div style="flex:1"><div class="q-text" id="qInvest2yrText">How much have you invested in the enterprise in the last 2 years?</div></div>
+              <button class="btn-audio" id="btn-audio-invest2yr" onclick="speakQText('qInvest2yrText','btn-audio-invest2yr')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-invest2yr"></div>
+          </div>
+
+          <div class="q-block" id="qInvestSource">
+            <div class="q-header">
+              <span class="q-number">D59</span>
+              <div style="flex:1"><div class="q-text" id="qInvestSourceText">What was the main source of investment? (Select all that apply)</div></div>
+              <button class="btn-audio" id="btn-audio-investsource" onclick="speakQText('qInvestSourceText','btn-audio-investsource')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-investsource"></div>
+            <div class="other-specify-box" id="other-investsource">
+              <label>Please specify other source:</label>
+              <div class="input-row">
+                <div class="dual-input">
+                  <div style="flex:1"><input type="text" id="investmentSrcOtherText" placeholder="Type here..."><div class="inp-lbl">✏️ Type</div></div>
+                  <div style="flex:1"><input type="text" id="investmentSrcOtherAudio" placeholder="Voice..." readonly><div class="inp-lbl">🎤 Voice</div></div>
+                </div>
+                <button class="btn-mic" id="mic-investmentSrcOther" onclick="startMic('investmentSrcOther')">🎤</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="q-block" id="qTurnover">
+            <div class="q-header">
+              <span class="q-number">D60</span>
+              <div style="flex:1"><div class="q-text" id="qTurnoverText">Approximate monthly turnover of the enterprise (INR)</div></div>
+              <button class="btn-audio" id="btn-audio-turnover" onclick="speakQText('qTurnoverText','btn-audio-turnover')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-turnover"></div>
+          </div>
+
+          <div class="q-block" id="qProfit">
+            <div class="q-header">
+              <span class="q-number">D61</span>
+              <div style="flex:1"><div class="q-text" id="qProfitText">Approximate monthly profit of the enterprise (INR)</div></div>
+              <button class="btn-audio" id="btn-audio-profit" onclick="speakQText('qProfitText','btn-audio-profit')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-profit"></div>
+          </div>
+
+          <div class="q-block" id="qSalesTrend">
+            <div class="q-header">
+              <span class="q-number">D62</span>
+              <div style="flex:1"><div class="q-text" id="qSalesTrendText">How has the sales trend been in the last 6 months?</div></div>
+              <button class="btn-audio" id="btn-audio-salestrend" onclick="speakQText('qSalesTrendText','btn-audio-salestrend')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-salestrend"></div>
+          </div>
+
+          <div class="q-block" id="qRecords">
+            <div class="q-header">
+              <span class="q-number">D63</span>
+              <div style="flex:1"><div class="q-text" id="qRecordsText">Do you maintain financial records for your enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-records" onclick="speakQText('qRecordsText','btn-audio-records')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-records"></div>
+          </div>
+
+          <div class="q-block" id="qEmployees">
+            <div class="q-header">
+              <span class="q-number">D64</span>
+              <div style="flex:1"><div class="q-text" id="qEmployeesText">Number of employees in the enterprise (enter 0 if none)</div></div>
+              <button class="btn-audio" id="btn-audio-employees" onclick="speakMatrixQuestion('employees','btn-audio-employees')">🔊</button>
+            </div>
+            <div class="matrix-wrap">
+              <table class="matrix-table">
+                <thead>
+                  <tr>
+                    <th class="row-header" id="empCatHeader">Category</th>
+                    <th><span id="empFTHeader">Full-time</span></th>
+                    <th><span id="empPTHeader">Part-time</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="row-label"><span id="empFamilyLabel">Family Members</span></td>
+                    <td><input type="number" id="empFamilyFulltime" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                    <td><input type="number" id="empFamilyParttime" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                  </tr>
+                  <tr>
+                    <td class="row-label"><span id="empOutsidersLabel">Outsiders</span></td>
+                    <td><input type="number" id="empOutsidersFulltime" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                    <td><input type="number" id="empOutsidersParttime" min="0" placeholder="0" style="width:70px;padding:5px;border:1.5px solid #ccc;border-radius:6px;text-align:center"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="q-block" id="qUPI">
+            <div class="q-header">
+              <span class="q-number">D65</span>
+              <div style="flex:1"><div class="q-text" id="qUPIText">Do you use UPI/QR code for business transactions?</div></div>
+              <button class="btn-audio" id="btn-audio-upi" onclick="speakQText('qUPIText','btn-audio-upi')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-upi"></div>
+          </div>
+
+          <div class="q-block" id="qDigitalTools">
+            <div class="q-header">
+              <span class="q-number">D66</span>
+              <div style="flex:1"><div class="q-text" id="qDigitalToolsText">Do you use digital tools to manage your enterprise? (e.g. WhatsApp, Khatabook, Google)</div></div>
+              <button class="btn-audio" id="btn-audio-digitaltools" onclick="speakQText('qDigitalToolsText','btn-audio-digitaltools')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-digitaltools"></div>
+          </div>
+
+          <div class="q-block" id="qBizPlan">
+            <div class="q-header">
+              <span class="q-number">D67</span>
+              <div style="flex:1"><div class="q-text" id="qBizPlanText">Do you have a written or mental business plan for the next 1-2 years?</div></div>
+              <button class="btn-audio" id="btn-audio-bizplan" onclick="speakQText('qBizPlanText','btn-audio-bizplan')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-bizplan"></div>
+          </div>
+
+          <div class="q-block" id="qEnergyEquip">
+            <div class="q-header">
+              <span class="q-number">D68</span>
+              <div style="flex:1"><div class="q-text" id="qEnergyEquipText">Have you adopted any energy-saving equipment in your enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-energyequip" onclick="speakQText('qEnergyEquipText','btn-audio-energyequip')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-energyequip"></div>
+          </div>
+
+          <div class="q-block" id="qEnergyAudit">
+            <div class="q-header">
+              <span class="q-number">D69</span>
+              <div style="flex:1"><div class="q-text" id="qEnergyAuditText">Has HIH India conducted an energy audit for your enterprise?</div></div>
+              <button class="btn-audio" id="btn-audio-energyaudit" onclick="speakQText('qEnergyAuditText','btn-audio-energyaudit')">🔊</button>
+            </div>
+            <div class="options-list" id="opts-energyaudit"></div>
+          </div>
+        </div><!-- end sectionDEnterprise -->
+      </div>
+
+      <!-- SECTION E -->
+      <div class="section-block">
+        <div class="section-title" id="secETitle">📊 SECTION E: BUSINESS ACUMEN</div>
+
+        <div class="q-block" id="qCompareFinance">
+          <div class="q-header">
+            <span class="q-number">E70</span>
+            <div style="flex:1"><div class="q-text" id="qCompareFinanceText">I always compare different finance sources before taking a loan for my business</div></div>
+            <button class="btn-audio" id="btn-audio-comparefinance" onclick="speakQText('qCompareFinanceText','btn-audio-comparefinance')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-comparefinance"></div>
+        </div>
+
+        <div class="q-block" id="qForecast">
+          <div class="q-header">
+            <span class="q-number">E71</span>
+            <div style="flex:1"><div class="q-text" id="qForecastText">How often do you forecast/estimate the profitability of your enterprise?</div></div>
+            <button class="btn-audio" id="btn-audio-forecast" onclick="speakQText('qForecastText','btn-audio-forecast')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-forecast"></div>
+        </div>
+
+        <div class="q-block" id="qAdjustExternal">
+          <div class="q-header">
+            <span class="q-number">E72</span>
+            <div style="flex:1"><div class="q-text" id="qAdjustExternalText">I adjust my business operations based on external factors like weather, market prices, or government policies</div></div>
+            <button class="btn-audio" id="btn-audio-adjustexternal" onclick="speakQText('qAdjustExternalText','btn-audio-adjustexternal')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-adjustexternal"></div>
+        </div>
+
+        <div class="q-block" id="qExtraIncome">
+          <div class="q-header">
+            <span class="q-number">E73</span>
+            <div style="flex:1"><div class="q-text" id="qExtraIncomeText">How do you primarily use any extra income or profit from your enterprise?</div></div>
+            <button class="btn-audio" id="btn-audio-extraincome" onclick="speakQText('qExtraIncomeText','btn-audio-extraincome')">🔊</button>
+          </div>
+          <div class="options-list" id="opts-extraincome"></div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">✅ Submit Survey</button>
+      <div class="status" id="status"></div>
+
+    </div><!-- end stepSurvey -->
+  </div><!-- end form-body -->
+</div><!-- end container -->
+
+<div id="tts-popup"></div>
+
+<script>
+// ================================================================
+//  TRANSLATIONS
+// ================================================================
+var T = {
+  "en-IN": {
+    consent: {
+      title: "Informed Consent",
+      text: "Namaste. I am from Hand in Hand India. We are conducting a Midline Survey to assess the progress of our programs for SHG women, CLN members, and enterprise owners.\n\nYour responses will remain strictly confidential and will be used only for research and program improvement purposes. Participation is entirely voluntary. You may skip any question or stop at any time.\n\nDo you voluntarily agree to participate in this survey?",
+      aadhaarTitle: "Aadhaar Consent",
+      aadhaarText: "We may request your Aadhaar number for identification and official documentation purposes. Your Aadhaar information will be stored securely and not shared with unauthorized persons. Providing Aadhaar details is voluntary.\n\nDo you consent to share your Aadhaar number?",
+      yes: "✅ Yes, I agree",
+      no: "❌ No, I do not agree",
+      aadhaarYes: "✅ Yes, I consent",
+      aadhaarNo: "❌ No, I do not consent",
+      proceed: "Proceed to Survey",
+      declined: "Thank you. The survey has been ended as per your choice.",
+      listenConsent: "Listen to Consent",
+      listenAadhaar: "Listen to Aadhaar Consent"
+    },
+    labels: {
+      state: "State", district: "District", block: "Block", panchayat: "Panchayat", village: "Village",
+      name: "Name of Respondent", age: "Age of Respondent", aadhaarNum: "Aadhaar Number",
+      mobile: "Mobile Number", businessDetails: "Business or Trade Details", products: "Main Products or Services",
+      employees: "Number of employees in full-time and part-time categories",
+      familyMatrix: "Family members by age group and gender"
+    },
+    opts: {
+      state: ["Tamil Nadu", "Rajasthan"],
+      gender: ["Female", "Male", "Transgender"],
+      marital: ["Married", "Single", "Separated", "Widow"],
+      social: ["SC", "ST", "OBC", "General"],
+      religion: ["Hindu", "Muslim", "Sikh", "Christian", "Other"],
+      houseType: ["Own", "Rented"],
+      education: ["No Formal Education","Pre-primary/Anganwadi","Primary","Middle","High School","Higher Secondary","Diploma","Graduate","Postgraduate"],
+      primaryIncome: ["Agriculture/ Farming","Daily wages labourer as skilled labour","MGNREGS","Working in nearby factory","Working in stone chips","Government salaried job","Private salaried job","Livestock","Shop / Business/trade","Income from the family member migrated to the city","Other"],
+      documents: ["Aadhaar Card","PAN Card","Voter ID","Ration Card","Bank Passbook","BPL Card","Caste Certificate","Disability Certificate","Other"],
+      phone: ["Yes, I have a personal smart phone","Yes, we have a smart phone at home (any one of the family members)","Yes, I have a basic phone","No, I do not have a mobile phone"],
+      hihDuration: ["6 - 12 Months","13 - 24 Months","25 - 36 Months","37 - 60 Months","Above 60 Months"],
+      monthlyIncome: ["Up to INR 10,000","INR 10,001 - 20,000","INR 20,001 - 50,000","INR 50,001 – 100,000","Above INR 1,00,000","Can't say"],
+      increasePct: ["Less than 10%","10-20%","20-30%","30-50%","More than 50%","Not sure"],
+      contributionPct: ["Less than 10%","10-30%","30-50%","More than 50%"],
+      savingsLocation: ["In cash, at home","Savings deposit in bank","Other deposits - bank","Other investments","Other"],
+      shgTopics: ["SHG roles & responsibilities","SHG Meeting management","Record keeping","Savings & credit planning","Leadership skills","SHG into CLN and its importance","CLN vision (Development of SHG, Family, Village and CLN)","Other"],
+      shgPerformance: ["The SHG's performance has improved after the training","The SHG's performance is the same after the training - no major changes / improvements","The SHG's performance has gone down after the training"],
+      finLitTopics: ["Smart Savings","Household budgeting","Bank account usage","Digital payments (UPI/ATM)","Loan management","SSS and other Govt. schemes","Other"],
+      digitalTopics: ["Cashless transaction","Smartphone usage","Internet browsing","Digital payments (UPI, banking apps)","Online government services","Social media usage (WhatsApp, Insta, FB and YouTube)","Cyber safety","Other"],
+      bmtTopics: ["Strength and Talent","Knowledge on enterprises","Goal setting","Selection of business","Confidence building","Risk-taking in business","Business planning","Financial discipline","Market understanding","Other"],
+      bdtTopics: ["Vision building","Time Management","Costing & pricing","SWOT analysis","Marketing & sales","Bookkeeping","Digital marketing","Access to finance","Other"],
+      skillTypes: ["Tailoring","Food Processing","Beauty & Wellness","Handicraft/Artisan","Agriculture related","IT/Digital Skills","Other"],
+      skillRevenue: ["Yes, I have set up a business using this skill","Yes, I am employed in a place that requires this skill","No, I have not yet used the skill for revenue","Not applicable"],
+      hihSupport: ["Did not receive any support from HIH India","Access to new credit sources","Provided market linkages","Knowledge on access to government schemes","Support in accessing existing government schemes","Training / capacity building support","Mentoring support","Networking support","Attended exposure visits","Other"],
+      followup: ["Not applicable","I accessed credit through new sources and obtained a loan","The market linkages helped me in expanding my enterprise / improving sales","I have applied for / accessed government schemes","I have incorporated elements from the training to streamline and improve my business","Expanded sales/ operations etc. through networking","Other"],
+      entSubtype: ["FBE","ME"],
+      entStarted: ["Recently (in the last 2 years)","2-5 years ago","More than 5 years ago"],
+      entType: ["Manufacturing","Retail/Trade","Service","Food Processing or Food Related","Agri & allied","Animal Husbandry & Allied","Handloom or Handicraft","Other"],
+      ownership: ["Sole Proprietor/Individual Ownership","Family-run","Group"],
+      memberRole: ["Lead role","Supporting role (with Husband/Family Members)"],
+      opsFreq: ["Daily","Weekly","Not regular","Seasonal"],
+      investment: ["Up to INR 50,000","INR 50,001-1,00,000","INR 1,00,001-2,00,000","INR 2,00,001-3,00,000","INR 3,00,001-5,00,000","Above INR 5,00,000"],
+      investSource: ["Loan from Bank","Loan from MFIs","Loan from SHG","From family members/relative/friends","Personal Saving","Other"],
+      turnover: ["1001 - 5000","5001-10,000","10,001-20,000","20,001-30,000","30,001-40,000","40,001-50,000","50,001-1,00,000","Above 1,00,000"],
+      salesTrend: ["Stable","Increasing","Decreasing"],
+      records: ["No records kept","Yes, Maintain informally (rough notebook)","Yes, Basic notebook (only sales/expenses)","Yes, Proper register (sales, profit, stock, etc.)","Digital records (Excel, mobile apps like Khatabook, etc.)"],
+      businessAcumen: ["Strongly Disagree","Disagree","Agree","Strongly Agree"],
+      forecastFreq: ["Every month","Once in 3 months","Once in 6 months","Once a year","Rarely","Never"],
+      extraIncomeUse: ["Spend mostly on household needs","Save some, spend some","Re-invest in the business for growth"],
+      yesno: ["Yes","No"],
+      yesnodontknow: ["Yes","No","I don't know"]
+    }
+  },
+  "ta-IN": {
+    consent: {
+      title: "தகவல் சம்மதம்",
+      text: "வணக்கம். நான் ஹேண்ட் இன் ஹேண்ட் இந்தியா நிறுவனத்திலிருந்து வருகிறேன். SHG பெண்கள், CLN உறுப்பினர்கள் மற்றும் நிறுவனங்களுக்கான நமது திட்டங்களின் முன்னேற்றத்தை மதிப்பிட நடு நிலை கணக்கெடுப்பு நடத்துகிறோம்.\n\nஉங்கள் பதில்கள் முற்றிலும் ரகசியமாக வைக்கப்படும். பங்கேற்பு முற்றிலும் தன்னார்வமானது.\n\nகணக்கெடுப்பில் பங்கேற்க சம்மதிக்கிறீர்களா?",
+      aadhaarTitle: "ஆதார் சம்மதம்",
+      aadhaarText: "அடையாள நோக்கங்களுக்காக ஆதார் எண் கேட்கப்படலாம். தகவல் பாதுகாப்பாக சேமிக்கப்படும். வழங்குவது தன்னார்வமானது.\n\nஆதார் எண்ணை பகிர சம்மதிக்கிறீர்களா?",
+      yes: "✅ ஆம், சம்மதிக்கிறேன்",
+      no: "❌ இல்லை, சம்மதிக்கவில்லை",
+      aadhaarYes: "✅ ஆம், சம்மதிக்கிறேன்",
+      aadhaarNo: "❌ இல்லை, சம்மதிக்கவில்லை",
+      proceed: "கணக்கெடுப்பிற்கு தொடரவும்",
+      declined: "நன்றி. உங்கள் விருப்பத்திற்கு இணங்க கணக்கெடுப்பு முடிக்கப்பட்டது.",
+      listenConsent: "சம்மதத்தை கேளுங்கள்",
+      listenAadhaar: "ஆதார் சம்மதத்தை கேளுங்கள்"
+    },
+    labels: {
+      state: "மாநிலம்", district: "மாவட்டம்", block: "வட்டம்", panchayat: "பஞ்சாயத்து", village: "கிராமம்",
+      name: "பதிலளிப்பவரின் பெயர்", age: "வயது", aadhaarNum: "ஆதார் எண்",
+      mobile: "மொபைல் எண்", businessDetails: "வணிக விவரங்கள்", products: "முக்கிய தயாரிப்புகள்",
+      employees: "ஊழியர்கள் எண்ணிக்கை", familyMatrix: "குடும்ப உறுப்பினர்கள்"
+    },
+    opts: {
+      state: ["தமிழ் நாடு","ராஜஸ்தான்"],
+      gender: ["பெண்","ஆண்","திருநங்கை"],
+      marital: ["திருமணமானவர்","திருமணமாகாதவர்","பிரிந்தவர்","விதவை"],
+      social: ["SC","ST","OBC","பொது"],
+      religion: ["இந்து","முஸ்லிம்","சீக்கியர்","கிறிஸ்தவர்","மற்றவை"],
+      houseType: ["சொந்தம்","வாடகை"],
+      education: ["முறையான கல்வி இல்லை","முன்பருவ/அங்கன்வாடி","தொடக்கக் கல்வி","நடுநிலை","உயர்நிலை","மேல்நிலை","டிப்ளோமா","பட்டதாரி","முதுகலை"],
+      primaryIncome: ["விவசாயம்","திறன் கொண்ட தொழிலாளராக கூலி வேலை","MGNREGS","அருகிலுள்ள தொழிற்சாலையில் வேலை","கல்சிப்பி வேலை","அரசு ஊதிய வேலை","தனியார் ஊதிய வேலை","கால்நடை","கடை / வியாபாரம்","நகரத்திற்கு குடிபெயர்ந்த குடும்ப உறுப்பினரிடமிருந்து வருமானம்","மற்றவை, குறிப்பிடவும்"],
+      documents: ["ஆதார் அட்டை","PAN அட்டை","வாக்காளர் அட்டை","ரேஷன் அட்டை","வங்கி பாஸ் புக்","BPL அட்டை","சாதி சான்றிதழ்","மாற்றுத்திறன் சான்றிதழ்","மற்றவை"],
+      phone: ["ஆம், என்னிடம் தனிப்பட்ட ஸ்மார்ட்போன் உள்ளது","ஆம், வீட்டில் ஸ்மார்ட்போன் உள்ளது","ஆம், என்னிடம் அடிப்படை போன் உள்ளது","இல்லை, என்னிடம் மொபைல் போன் இல்லை"],
+      hihDuration: ["6 - 12 மாதங்கள்","13 - 24 மாதங்கள்","25 - 36 மாதங்கள்","37 - 60 மாதங்கள்","60 மாதங்களுக்கு மேல்"],
+      monthlyIncome: ["INR 10,000 வரை","INR 10,001 - 20,000","INR 20,001 - 50,000","INR 50,001 - 1,00,000","INR 1,00,000க்கு மேல்","சொல்ல முடியாது"],
+      increasePct: ["10% க்கும் குறைவாக","10-20%","20-30%","30-50%","50% க்கும் அதிகமாக","நிச்சயமில்லை"],
+      contributionPct: ["10% க்கும் குறைவு","10-30%","30-50%","50% க்கும் அதிகம்"],
+      savingsLocation: ["வீட்டில் பணமாக","வங்கியில் சேமிப்பு வைப்பு","பிற வங்கி வைப்புகள்","பிற முதலீடுகள்","மற்றவை"],
+      shgTopics: ["SHG பாத்திரங்கள் மற்றும் பொறுப்புகள்","SHG கூட்ட மேலாண்மை","பதிவு பராமரிப்பு","சேமிப்பு மற்றும் கடன் திட்டமிடல்","தலைமைத்துவ திறன்கள்","SHG இலிருந்து CLN மற்றும் அதன் முக்கியத்துவம்","CLN தொலைநோக்கு","மற்றவை"],
+      shgPerformance: ["பயிற்சிக்குப் பிறகு SHG செயல்திறன் மேம்பட்டது","பயிற்சிக்குப் பிறகு SHG செயல்திறன் மாறவில்லை","பயிற்சிக்குப் பிறகு SHG செயல்திறன் குறைந்தது"],
+      finLitTopics: ["புத்திசாலித்தனமான சேமிப்பு","வீட்டு பட்ஜெட்டிங்","வங்கி கணக்கு பயன்பாடு","டிஜிட்டல் கொடுப்பனவுகள் (UPI/ATM)","கடன் மேலாண்மை","SSS மற்றும் பிற அரசு திட்டங்கள்","மற்றவை"],
+      digitalTopics: ["பண இல்லாத பரிவர்த்தனை","ஸ்மார்ட்போன் பயன்பாடு","இணைய உலாவல்","டிஜிட்டல் கொடுப்பனவுகள் (UPI, வங்கி)","ஆன்லைன் அரசு சேவைகள்","சமூக ஊடக பயன்பாடு","சைபர் பாதுகாப்பு","மற்றவை"],
+      bmtTopics: ["வலிமை மற்றும் திறமை","நிறுவனங்கள் பற்றிய அறிவு","இலக்கு நிர்ணயம்","வணிக தேர்வு","நம்பிக்கை வளர்ப்பு","வணிகத்தில் ஆபத்து எடுக்கும்","வணிக திட்டமிடல்","நிதி ஒழுக்கம்","சந்தை புரிதல்","மற்றவை"],
+      bdtTopics: ["தொலைநோக்கு கட்டமைப்பு","நேர மேலாண்மை","செலவு மற்றும் விலை நிர்ணயம்","SWOT பகுப்பாய்வு","சந்தைப்படுத்தல் மற்றும் விற்பனை","புத்தக பராமரிப்பு","டிஜிட்டல் சந்தைப்படுத்தல்","நிதி அணுகல்","மற்றவை"],
+      skillTypes: ["தையல்","உணவு பதப்படுத்துதல்","அழகு மற்றும் நலன்","கைவினை","வேளாண்மை சார்ந்த","IT/டிஜிட்டல்","மற்றவை"],
+      skillRevenue: ["ஆம், இந்த திறனை பயன்படுத்தி வணிகம் தொடங்கியுள்ளேன்","ஆம், இந்த திறனை தேவைப்படும் இடத்தில் வேலை செய்கிறேன்","இல்லை, இன்னும் வருவாய்க்கு பயன்படுத்தவில்லை","பொருந்தாது"],
+      hihSupport: ["HIH இந்தியாவிடமிருந்து எந்த ஆதரவும் பெறவில்லை","புதிய கடன் ஆதாரங்களுக்கான அணுகல்","சந்தை இணைப்புகள் வழங்கப்பட்டன","அரசு திட்டங்களை அணுகுவதற்கான அறிவு","அரசு திட்டங்களை அணுக உதவி","பயிற்சி / திறன் மேம்பாடு","வழிகாட்டல் ஆதரவு","நெட்வொர்க்கிங் ஆதரவு","வெளிப்பாடு வருகைகளில் கலந்துகொண்டனர்","மற்றவை"],
+      followup: ["பொருந்தாது","புதிய மூலங்கள் மூலம் கடன் பெற்றேன்","சந்தை இணைப்புகள் வணிகத்தை விரிவுபடுத்த உதவியது","அரசு திட்டங்களுக்கு விண்ணப்பித்தேன்","பயிற்சியிலிருந்து கற்றதை வணிகத்தில் பயன்படுத்தினேன்","நெட்வொர்க்கிங் மூலம் விற்பனையை விரிவுபடுத்தினேன்","மற்றவை"],
+      entSubtype: ["FBE","ME"],
+      entStarted: ["சமீபத்தில் (கடந்த 2 வருடங்களில்)","2-5 ஆண்டுகளுக்கு முன்பு","5 ஆண்டுகளுக்கு மேல்"],
+      entType: ["உற்பத்தி","சில்லறை / வர்த்தகம்","சேவை","உணவு பதப்படுத்துதல்","வேளாண் மற்றும் கூட்டு","கால்நடை மற்றும் கூட்டு","கைத்தறி அல்லது கைவினை","மற்றவை"],
+      ownership: ["தனி உரிமையாளர்","குடும்ப நிறுவனம்","குழு"],
+      memberRole: ["முக்கிய பங்கு","ஆதரவு பங்கு"],
+      opsFreq: ["தினமும்","வாரம் ஒரு முறை","ஒழுங்கற்ற","பருவகால"],
+      investment: ["INR 50,000 வரை","INR 50,001-1,00,000","INR 1,00,001-2,00,000","INR 2,00,001-3,00,000","INR 3,00,001-5,00,000","INR 5,00,000 க்கு மேல்"],
+      investSource: ["வங்கி கடன்","MFI கடன்","SHG கடன்","குடும்பத்தினர் / நண்பர்கள்","தனிப்பட்ட சேமிப்பு","மற்றவை"],
+      turnover: ["1001 - 5000","5001-10,000","10,001-20,000","20,001-30,000","30,001-40,000","40,001-50,000","50,001-1,00,000","1,00,000 க்கு மேல்"],
+      salesTrend: ["நிலையான","அதிகரிக்கும்","குறைந்து வரும்"],
+      records: ["பதிவுகள் இல்லை","ஆம், முறைசாரா முறையில் பராமரிக்கிறேன்","ஆம், அடிப்படை நோட்புக்","ஆம், சரியான பதிவேடு","டிஜிட்டல் பதிவுகள்"],
+      businessAcumen: ["கடுமையாக உடன்படவில்லை","உடன்படவில்லை","உடன்படுகிறேன்","கடுமையாக உடன்படுகிறேன்"],
+      forecastFreq: ["ஒவ்வொரு மாதமும்","3 மாதங்களுக்கு ஒரு முறை","6 மாதங்களுக்கு ஒரு முறை","ஆண்டுக்கு ஒரு முறை","அரிதாக","ஒருபோதும் இல்லை"],
+      extraIncomeUse: ["பெரும்பாலும் வீட்டு தேவைகளுக்கு செலவிடுவேன்","சில சேமிப்பு, சில செலவு","வணிக வளர்ச்சிக்கு மீண்டும் முதலீடு செய்வேன்"],
+      yesno: ["ஆம்","இல்லை"],
+      yesnodontknow: ["ஆம்","இல்லை","தெரியாது"]
+    }
+  },
+  "hi-IN": {
+    consent: {
+      title: "सूचित सहमति",
+      text: "नमस्ते। मैं हैंड इन हैंड इंडिया से हूँ। हम एसएचजी महिलाओं, सीएलएन सदस्यों और उद्यम मालिकों के लिए अपने कार्यक्रमों की प्रगति का आकलन करने के लिए मिडलाइन सर्वे कर रहे हैं।\n\nआपकी प्रतिक्रियाएं पूरी तरह गोपनीय रहेंगी। भागीदारी पूरी तरह स्वैच्छिक है।\n\nक्या आप इस सर्वे में भाग लेने के लिए स्वेच्छा से सहमत हैं?",
+      aadhaarTitle: "आधार सहमति",
+      aadhaarText: "पहचान उद्देश्यों के लिए आधार नंबर मांगा जा सकता है। जानकारी सुरक्षित रखी जाएगी। प्रदान करना स्वैच्छिक है।\n\nक्या आप अपना आधार नंबर साझा करने के लिए सहमत हैं?",
+      yes: "✅ हाँ, मैं सहमत हूँ",
+      no: "❌ नहीं, मैं सहमत नहीं हूँ",
+      aadhaarYes: "✅ हाँ, मैं सहमत हूँ",
+      aadhaarNo: "❌ नहीं, मैं सहमत नहीं हूँ",
+      proceed: "सर्वे पर आगे बढ़ें",
+      declined: "धन्यवाद। आपकी पसंद के अनुसार सर्वे समाप्त कर दिया गया है.",
+      listenConsent: "सहमति सुनें",
+      listenAadhaar: "आधार सहमति सुनें"
+    },
+    labels: {
+      state: "राज्य", district: "जिला", block: "ब्लॉक", panchayat: "पंचायत", village: "गाँव",
+      name: "उत्तरदाता का नाम", age: "आयु", aadhaarNum: "आधार नंबर",
+      mobile: "मोबाइल नंबर", businessDetails: "व्यवसाय विवरण", products: "मुख्य उत्पाद या सेवाएं",
+      employees: "कर्मचारी संख्या", familyMatrix: "परिवार के सदस्य"
+    },
+    opts: {
+      state: ["तमिलनाडु","राजस्थान"],
+      gender: ["महिला","पुरुष","ट्रांसजेंडर"],
+      marital: ["विवाहित","अविवाहित","अलग","विधवा"],
+      social: ["अनुसूचित जाति","अनुसूचित जनजाति","अन्य पिछड़ा वर्ग","सामान्य"],
+      religion: ["हिंदू","मुस्लिम","सिख","ईसाई","अन्य"],
+      houseType: ["खुद का","किराए का"],
+      education: ["कोई औपचारिक शिक्षा नहीं","प्री-प्राइमरी/आंगनवाड़ी","प्राथमिक","माध्यमिक","हाई स्कूल","उच्चतर माध्यमिक","डिप्लोमा","स्नातक","स्नातकोत्तर"],
+      primaryIncome: ["कृषि / खेती","कुशल मजदूर के रूप में दैनिक मजदूरी","मनरेगा","पास की फैक्ट्री में काम","पत्थर तोड़ने का काम","सरकारी वेतन नौकरी","निजी वेतन नौकरी","पशुपालन","दुकान / व्यापार","शहर गए परिवार के सदस्य से आय","अन्य, बताएं"],
+      documents: ["आधार कार्ड","पैन कार्ड","मतदाता पहचान","राशन कार्ड","बैंक पासबुक","बीपीएल कार्ड","जाति प्रमाण पत्र","विकलांगता प्रमाण पत्र","अन्य"],
+      phone: ["हाँ, मेरे पास व्यक्तिगत स्मार्टफोन है","हाँ, घर में स्मार्टफोन है","हाँ, मेरे पास बेसिक फोन है","नहीं, मेरे पास मोबाइल फोन नहीं है"],
+      hihDuration: ["6 - 12 महीने","13 - 24 महीने","25 - 36 महीने","37 - 60 महीने","60 महीने से अधिक"],
+      monthlyIncome: ["INR 10,000 तक","INR 10,001 - 20,000","INR 20,001 - 50,000","INR 50,001 - 1,00,000","INR 1,00,000 से अधिक","नहीं बता सकते"],
+      increasePct: ["10% से कम","10-20%","20-30%","30-50%","50% से अधिक","निश्चित नहीं"],
+      contributionPct: ["10% से कम योगदान","10-30% योगदान","30-50% योगदान","50% से अधिक योगदान"],
+      savingsLocation: ["घर पर नकद","बैंक में बचत जमा","अन्य बैंक जमा","अन्य निवेश","अन्य"],
+      shgTopics: ["SHG की भूमिकाएं और जिम्मेदारियां","SHG बैठक प्रबंधन","रिकॉर्ड रखना","बचत और ऋण योजना","नेतृत्व कौशल","SHG से CLN और इसका महत्व","CLN दृष्टिकोण","अन्य"],
+      shgPerformance: ["प्रशिक्षण के बाद SHG का प्रदर्शन बेहतर हुआ","प्रशिक्षण के बाद SHG का प्रदर्शन समान रहा","प्रशिक्षण के बाद SHG का प्रदर्शन कम हुआ"],
+      finLitTopics: ["स्मार्ट बचत","घरेलू बजट","बैंक खाता उपयोग","डिजिटल भुगतान (UPI/ATM)","ऋण प्रबंधन","SSS और अन्य सरकारी योजनाएं","अन्य"],
+      digitalTopics: ["कैशलेस लेनदेन","स्मार्टफोन उपयोग","इंटरनेट ब्राउजिंग","डिजिटल भुगतान (UPI, बैंकिंग ऐप)","ऑनलाइन सरकारी सेवाएं","सोशल मीडिया उपयोग","साइबर सुरक्षा","अन्य"],
+      bmtTopics: ["ताकत और प्रतिभा","उद्यमों पर ज्ञान","लक्ष्य निर्धारण","व्यवसाय का चयन","आत्मविश्वास निर्माण","व्यवसाय में जोखिम लेना","व्यवसाय योजना","वित्तीय अनुशासन","बाजार समझ","अन्य"],
+      bdtTopics: ["विजन बिल्डिंग","समय प्रबंधन","लागत और मूल्य निर्धारण","SWOT विश्लेषण","विपणन और बिक्री","बहीखाता","डिजिटल मार्केटिंग","वित्त तक पहुंच","अन्य"],
+      skillTypes: ["सिलाई","खाद्य प्रसंस्करण","सौंदर्य और कल्याण","हस्तशिल्प","कृषि संबंधित","IT/डिजिटल","अन्य"],
+      skillRevenue: ["हाँ, इस कौशल से व्यवसाय शुरू किया","हाँ, इस कौशल की जरूरत वाली जगह काम करती हूं","नहीं, अभी तक उपयोग नहीं किया","लागू नहीं"],
+      hihSupport: ["HIH India से कोई सहायता नहीं मिली","नए ऋण स्रोतों तक पहुंच","बाजार संपर्क प्रदान किए गए","सरकारी योजनाओं तक पहुंच का ज्ञान","सरकारी योजनाओं तक पहुंच में सहायता","प्रशिक्षण / क्षमता निर्माण सहायता","परामर्श सहायता","नेटवर्किंग सहायता","एक्सपोजर विजिट में भाग लिया","अन्य"],
+      followup: ["लागू नहीं","नए स्रोतों से ऋण लिया","बाजार संपर्क से उद्यम विस्तार हुआ","सरकारी योजनाओं के लिए आवेदन किया","प्रशिक्षण के तत्वों को व्यवसाय में लागू किया","नेटवर्किंग से बिक्री बढ़ाई","अन्य"],
+      entSubtype: ["FBE","ME"],
+      entStarted: ["हाल ही में (पिछले 2 वर्षों में)","2-5 साल पहले","5 साल से अधिक पहले"],
+      entType: ["विनिर्माण","खुदरा / व्यापार","सेवा","खाद्य प्रसंस्करण","कृषि और संबद्ध","पशुपालन और संबद्ध","हथकरघा या हस्तशिल्प","अन्य"],
+      ownership: ["एकल स्वामित्व","पारिवारिक व्यवसाय","समूह"],
+      memberRole: ["मुख्य भूमिका","सहायक भूमिका"],
+      opsFreq: ["दैनिक","साप्ताहिक","अनियमित","मौसमी"],
+      investment: ["INR 50,000 तक","INR 50,001-1,00,000","INR 1,00,001-2,00,000","INR 2,00,001-3,00,000","INR 3,00,001-5,00,000","INR 5,00,000 से अधिक"],
+      investSource: ["बैंक से ऋण","MFI से ऋण","SHG से ऋण","परिवार / रिश्तेदार / दोस्त","व्यक्तिगत बचत","अन्य"],
+      turnover: ["1001 - 5000","5001-10,000","10,001-20,000","20,001-30,000","30,001-40,000","40,001-50,000","50,001-1,00,000","1,00,000 से अधिक"],
+      salesTrend: ["स्थिर","बढ़ रहा है","घट रहा है"],
+      records: ["कोई रिकॉर्ड नहीं","हाँ, अनौपचारिक रूप से रखता/रखती हूं","हाँ, बेसिक नोटबुक","हाँ, उचित रजिस्टर","डिजिटल रिकॉर्ड"],
+      businessAcumen: ["दृढ़ता से असहमत","असहमत","सहमत","दृढ़ता से सहमत"],
+      forecastFreq: ["हर महीने","3 महीने में एक बार","6 महीने में एक बार","साल में एक बार","शायद ही कभी","कभी नहीं"],
+      extraIncomeUse: ["ज्यादातर घरेलू जरूरतों पर खर्च","कुछ बचाएं, कुछ खर्च करें","व्यवसाय विकास में पुनर्निवेश"],
+      yesno: ["हाँ","नहीं"],
+      yesnodontknow: ["हाँ","नहीं","मुझे नहीं पता"]
+    }
+  }
+};
+
+// ================================================================
+//  STATE
+// ================================================================
+var lang = "en-IN";
+var formSubmitted = false;
+var gpsLat = "", gpsLng = "";
+var isRec = false, recog = null, curMicBtn = null, curMicField = null;
+var currentAudio = null, ttsActive = false, activeBtnId = null;
+
+var _consentChunks = [], _consentChunkIdx = 0;
+var _aadhaarConsentChunks = [], _aadhaarConsentChunkIdx = 0;
+
+var LANG_TTS = {"en-IN":"en","ta-IN":"ta","hi-IN":"hi"};
+
+// ================================================================
+//  INIT
+// ================================================================
+window.onload = function() {
+  captureGPS();
+  setDate();
+};
+
+function captureGPS() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function(p) {
+        gpsLat = p.coords.latitude.toFixed(6);
+        gpsLng = p.coords.longitude.toFixed(6);
+        var el = document.getElementById('gpsDisplay');
+        if (el) el.textContent = 'Lat: ' + gpsLat + ', Long: ' + gpsLng;
+      },
+      function() {
+        var el = document.getElementById('gpsDisplay');
+        if (el) el.textContent = 'GPS unavailable';
+      },
+      {timeout:10000, enableHighAccuracy:true}
+    );
+  }
+}
+
+function setDate() {
+  var d = new Date();
+  var s = d.getDate().toString().padStart(2,'0') + '/' + (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear();
+  var el = document.getElementById('dateDisplay');
+  if (el) el.textContent = s;
+}
+
+// ================================================================
+//  LANGUAGE SELECTION
+// ================================================================
+function selectLang(l) {
+  stopAllAudio();
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b){b.classList.remove('active');});
+  var map = {'en-IN':'en','ta-IN':'ta','hi-IN':'hi'};
+  document.getElementById('btn-lang-' + map[l]).classList.add('active');
+}
+
+// ================================================================
+//  CONSENT
+// ================================================================
+function showConsent() {
+  document.getElementById('stepLang').style.display = 'none';
+  document.getElementById('stepConsent').style.display = 'block';
+  var t = T[lang].consent;
+  document.getElementById('consentTitle').textContent = '📜 ' + t.title;
+  document.getElementById('consentText').textContent = t.text;
+  document.getElementById('aadhaarConsentTitle').textContent = '🪪 ' + t.aadhaarTitle;
+  document.getElementById('aadhaarConsentText').textContent = t.aadhaarText;
+  document.getElementById('consentYesLabel').textContent = t.yes;
+  document.getElementById('consentNoLabel').textContent = t.no;
+  document.getElementById('aadhaarConsentYesLabel').textContent = t.aadhaarYes;
+  document.getElementById('aadhaarConsentNoLabel').textContent = t.aadhaarNo;
+  document.getElementById('consentProceedLabel').textContent = t.proceed;
+  var lbl = document.getElementById('consentAudioLabel');
+  if (lbl) lbl.textContent = t.listenConsent || 'Listen to Consent';
+  var aadhaarLbl = document.getElementById('aadhaarConsentAudioLabel');
+  if (aadhaarLbl) aadhaarLbl.textContent = t.listenAadhaar || 'Listen to Aadhaar Consent';
+}
+
+function selectConsent(v) {
+  document.querySelectorAll('#stepConsent > .consent-box:first-child .consent-opt').forEach(function(o){o.classList.remove('selected');});
+  document.getElementById(v==='yes'?'consentYesOpt':'consentNoOpt').classList.add('selected');
+  document.getElementById(v==='yes'?'consentYes':'consentNo').checked = true;
+}
+
+function selectAadhaarConsent(v) {
+  document.querySelectorAll('#aadhaarConsentBox .consent-opt').forEach(function(o){o.classList.remove('selected');});
+  document.getElementById(v==='yes'?'aadhaarYesOpt':'aadhaarNoOpt').classList.add('selected');
+  document.getElementById(v==='yes'?'aadhaarConsentYes':'aadhaarConsentNo').checked = true;
+  showHide('qAadhaarNumber', v==='yes');
+}
+
+function speakConsentOpt(labelId) {
+  var el = document.getElementById(labelId);
+  if (!el) return;
+  var text = el.textContent.replace(/^[✅❌]\s*/, '').trim();
+  if (text) speakText(text, null);
+}
+
+function proceedFromConsent() {
+  var yes = document.getElementById('consentYes').checked;
+  var no  = document.getElementById('consentNo').checked;
+  if (!yes && !no) { alert(lang==='ta-IN'?'தயவுசெய்து ஒரு விருப்பத்தை தேர்ந்தெடுக்கவும்.':lang==='hi-IN'?'कृपया एक विकल्प चुनें।':'Please select Yes or No.'); return; }
+  stopAllAudio();
+  if (no) {
+    document.getElementById('stepConsent').style.display = 'none';
+    document.getElementById('appBody').innerHTML = '<div style="text-align:center;padding:40px;font-size:16px;color:#555">' + T[lang].consent.declined + '</div>';
+    return;
+  }
+  document.getElementById('stepConsent').style.display = 'none';
+  document.getElementById('stepSurvey').style.display = 'block';
+  renderAllOptions();
+  updateLabels();
+}
+
+// ================================================================
+//  UPDATE LABELS
+// ================================================================
+function getLbl(k) { return (T[lang].labels && T[lang].labels[k]) || ''; }
+
+function updateLabels() {
+  var lbl = T[lang].labels;
+  var isTa = lang==='ta-IN', isHi = lang==='hi-IN';
+  function s(id,t){var e=document.getElementById(id);if(e)e.textContent=t;}
+  s('secMetaTitle', '📋 ' + (isTa?'மெட்டாடேட்டா':isHi?'मेटाडेटा':'METADATA'));
+  s('secATitle',    '👤 ' + (isTa?'பிரிவு A: பதிலளிப்பவர் விவரம்':isHi?'अनुभाग A: उत्तरदाता प्रोफाइल':'SECTION A: RESPONDENT PROFILE'));
+  s('secBTitle',    '💰 ' + (isTa?'பிரிவு B: வருமானம் மற்றும் நிதி நிலை':isHi?'अनुभाग B: आय और वित्तीय स्थिति':'SECTION B: INCOME & FINANCIAL STATUS'));
+  s('secCTitle',    '📚 ' + (isTa?'பிரிவு C: பயிற்சி மற்றும் திறன் மேம்பாடு':isHi?'अनुभाग C: प्रशिक्षण और क्षमता निर्माण':'SECTION C: TRAINING & CAPACITY BUILDING'));
+  s('secDTitle',    '🏭 ' + (isTa?'பிரிவு D: நிறுவன விவரங்கள்':isHi?'अनुभाग D: उद्यम विवरण':'SECTION D: ENTERPRISE DETAILS'));
+  s('secETitle',    '📊 ' + (isTa?'பிரிவு E: வணிக புரிதல்':isHi?'अनुभाग E: व्यावसायिक कौशल':'SECTION E: BUSINESS ACUMEN'));
+  s('qStateText',    lbl.state); s('qDistrictText', lbl.district);
+  s('qBlockText',    lbl.block);  s('qPanchayatText',lbl.panchayat);
+  s('qVillageText',  lbl.village);
+  s('qNameText',     lbl.name);   s('qAgeText', lbl.age);
+  s('qGenderText',   isTa?'பால்':isHi?'लिंग':'Gender');
+  s('qMaritalText',  isTa?'திருமண நிலை':isHi?'वैवाहिक स्थिति':'Marital Status');
+  s('qSocialText',   isTa?'சமூக வகை':isHi?'सामाजिक श्रेणी':'Social Category');
+  s('qReligionText', isTa?'மதம்':isHi?'धर्म':'Religion');
+  s('qDisabilityText', isTa?'உங்களுக்கு ஏதாவது உடல் அல்லது மன குறைபாடு உள்ளதா?':isHi?'क्या आपको कोई शारीरिक या मानसिक विकलांगता है?':'Do you have any physical or mental disability?');
+  s('qHouseTypeText', isTa?'வீட்டின் வகை':isHi?'घर का प्रकार':'Type of House');
+  s('qFamilyText',    isTa?'குடும்ப உறுப்பினர்கள் (ஒவ்வொரு பிரிவிலும் நபர் எண்ணிக்கை)':isHi?'परिवार के सदस्य (प्रत्येक श्रेणी में लोगों की संख्या)':'Family Members (number of people in each category)');
+  s('famCatHeader',   isTa?'வகை':isHi?'श्रेणी':'Category');
+  s('famMaleHeader',  isTa?'ஆண்':isHi?'पुरुष':'Male');
+  s('famFemaleHeader',isTa?'பெண்':isHi?'महिला':'Female');
+  s('famBelow18',     isTa?'18 வயதுக்கு கீழ்':isHi?'18 वर्ष से कम':'Below 18 years');
+  s('fam18Above',     isTa?'18 வயது மற்றும் அதற்கு மேல்':isHi?'18 वर्ष और उससे अधिक':'18 years and above');
+  s('qEducationText', isTa?'படித்த உயர் கல்வி நிலை':isHi?'शिक्षा का उच्चतम स्तर':'Highest level of education completed');
+  s('qPrimaryIncomeText', isTa?'குடும்பத்தின் முதன்மை வருமான ஆதாரங்கள் (பொருந்தும் அனைத்தையும் தேர்ந்தெடுக்கவும்)':isHi?'परिवार की प्राथमिक आय के स्रोत (सभी लागू चुनें)':'Primary Source(s) of Family Income (Select all that apply)');
+  s('qBusinessDetailsText', isTa?'உங்கள் வணிக/வர்த்தக/சேவை விவரங்கள் கொடுக்கவும்':isHi?'अपने व्यवसाय/व्यापार/सेवा का विवरण दें':'Please provide details of your business/trade/service');
+  s('qMigrationText',  isTa?'குடும்பத்தில் யாராவது வேலைக்காக கிராமத்துக்கு வெளியே வசிக்கிறார்களா?':isHi?'क्या कोई परिवार का सदस्य काम के लिए गाँव के बाहर रहता है?':'Does any family member live outside the village for work?');
+  s('qDocumentsText',  isTa?'உங்களிடம் கீழ்க்கண்ட ஆவணங்களில் எவை உள்ளன? (பொருந்தும் அனைத்தையும் தேர்ந்தெடுக்கவும்)':isHi?'आपके पास कौन से दस्तावेज हैं? (सभी लागू चुनें)':'Which of the following documents do you have? (Select all that apply)');
+  s('qPhoneText',      isTa?'உங்களிடம் எந்த வகை போன் உள்ளது?':isHi?'आपके पास किस प्रकार का फोन है?':'What type of phone do you have?');
+  s('qMobileText',     lbl.mobile);
+  s('qHIHMemberText',  isTa?'நீங்கள் ஹேண்ட் இன் ஹேண்ட் இந்தியா (HIH) சுய உதவி குழு உறுப்பினரா?':isHi?'क्या आप हैंड इन हैंड इंडिया (HIH) स्वयं सहायता समूह के सदस्य हैं?':'Are you a member of a Hand in Hand India (HIH) Self-Help Group?');
+  s('qHIHDurationText', isTa?'HIH இந்தியாவுடன் எவ்வளவு காலம் தொடர்பு இருக்கிறது?':isHi?'आप HIH India से कब से जुड़ी हैं?':'How long have you been associated with HIH India?');
+  s('qCLNText',        isTa?'நீங்கள் கிளஸ்டர் நிலை நெட்வொர்க் (CLN) உறுப்பினரா?':isHi?'क्या आप क्लस्टर स्तरीय नेटवर्क (CLN) के सदस्य हैं?':'Are you a member of a Cluster Level Network (CLN)?');
+  s('qMonthlyIncomeText', isTa?'மாதாந்திர குடும்ப வருமானம் தோராயமாக என்ன?':isHi?'परिवार की अनुमानित मासिक आय क्या है?':'What is the approximate monthly household income?');
+  s('qIncomeIncreaseText', isTa?'கடந்த 2 வருடங்களில் உங்கள் வருமானம் அதிகரித்ததா?':isHi?'क्या पिछले 2 वर्षों में आपकी आय बढ़ी है?':'Has your household income increased in the past 2 years?');
+  s('qIncreasePctText',   isTa?'வருமானம் தோராயமாக எந்த அளவு அதிகரித்தது?':isHi?'आपकी आय लगभग कितने प्रतिशत बढ़ी?':'By approximately what percentage has your income increased?');
+  s('qContributesText',   isTa?'நீங்கள் தனிப்பட்ட முறையில் குடும்ப வருமானத்திற்கு பங்களிக்கிறீர்களா?':isHi?'क्या आप व्यक्तिगत रूप से घरेलू आय में योगदान करती हैं?':'Do you personally contribute to the household income?');
+  s('qContributionPctText',isTa?'குடும்ப வருமானத்தில் உங்கள் பங்களிப்பு எவ்வளவு?':isHi?'आप घरेलू आय में कितना प्रतिशत योगदान देती हैं?':'What percentage of household income do you contribute?');
+  s('qSavesText',          isTa?'நீங்கள் உங்கள் வருமானத்தின் ஒரு பகுதியை தொடர்ந்து சேமிக்கிறீர்களா?':isHi?'क्या आप नियमित रूप से अपनी आय का कुछ हिस्सा बचाती हैं?':'Do you save a portion of your income regularly?');
+  s('qSavingsLocationText',isTa?'சேமிப்பை எங்கு வைக்கிறீர்கள்? (பொருந்தும் அனைத்தையும் தேர்ந்தெடுக்கவும்)':isHi?'आप अपनी बचत कहाँ रखती हैं? (सभी लागू चुनें)':'Where do you keep your savings? (Select all that apply)');
+  s('qSHGTrainingText',   isTa?'HIH இந்தியா நடத்திய SHG மேலாண்மை பயிற்சியில் கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित SHG प्रबंधन प्रशिक्षण में भाग लिया?':'Have you attended SHG Management Training conducted by HIH India?');
+  s('qSHGTopicsText',     isTa?'SHG பயிற்சியில் எந்த தலைப்புகள் கவரப்பட்டன?':isHi?'SHG प्रशिक्षण में कौन से विषय शामिल थे?':'Which topics were covered in the SHG training? (Select all that apply)');
+  s('qSHGUsefulText',     isTa?'SHG பயிற்சியில் மிகவும் பயனுள்ள தலைப்புகள் எவை?':isHi?'SHG प्रशिक्षण में कौन से विषय सबसे उपयोगी थे?':'Which SHG training topics were most useful to you? (Select all that apply)');
+  s('qSHGPerfText',       isTa?'பயிற்சிக்குப் பிறகு SHG செயல்திறன் எப்படி மாறியது?':isHi?'प्रशिक्षण के बाद SHG का प्रदर्शन कैसे बदला?':"How has the SHG's performance changed after the training?");
+  s('qFinLitText',        isTa?'HIH இந்தியா நடத்திய நிதி கல்வி பயிற்சியில் கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित वित्तीय साक्षरता प्रशिक्षण में भाग लिया?':'Have you attended Financial Literacy Training conducted by HIH India?');
+  s('qFinLitTopicsText',  isTa?'நிதி கல்வி பயிற்சியில் எந்த தலைப்புகள் கவரப்பட்டன?':isHi?'वित्तीय साक्षरता प्रशिक्षण में कौन से विषय शामिल थे?':'Which topics were covered in Financial Literacy training? (Select all that apply)');
+  s('qFinLitUsefulText',  isTa?'நிதி கல்வி பயிற்சியில் மிகவும் பயனுள்ள தலைப்புகள் எவை?':isHi?'वित्तीय साक्षरता प्रशिक्षण में कौन से विषय सबसे उपयोगी थे?':'Which Financial Literacy topics were most useful? (Select all that apply)');
+  s('qDigitalText',       isTa?'HIH இந்தியா நடத்திய டிஜிட்டல் கல்வி பயிற்சியில் கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित डिजिटल साक्षरता प्रशिक्षण में भाग लिया?':'Have you attended Digital Literacy Training conducted by HIH India?');
+  s('qDigitalTopicsText', isTa?'டிஜிட்டல் கல்வி பயிற்சியில் எந்த தலைப்புகள் கவரப்பட்டன?':isHi?'डिजिटल साक्षरता प्रशिक्षण में कौन से विषय शामिल थे?':'Which topics were covered in Digital Literacy training? (Select all that apply)');
+  s('qDigitalUsefulText', isTa?'டிஜிட்டல் கல்வி பயிற்சியில் மிகவும் பயனுள்ள தலைப்புகள் எவை?':isHi?'डिजिटल साक्षरता प्रशिक्षण में कौन से विषय सबसे उपयोगी थे?':'Which Digital Literacy topics were most useful? (Select all that apply)');
+  s('qBMTText',           isTa?'HIH இந்தியா நடத்திய வணிக உந்துதல் பயிற்சியில் (BMT) கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित व्यावसायिक प्रेरणा प्रशिक्षण (BMT) में भाग लिया?':'Have you attended Business Motivation Training (BMT) conducted by HIH India?');
+  s('qBMTTopicsText',     isTa?'BMT பயிற்சியில் எந்த தலைப்புகள் கவரப்பட்டன?':isHi?'BMT में कौन से विषय शामिल थे?':'Which topics were covered in BMT? (Select all that apply)');
+  s('qBMTUsefulText',     isTa?'BMT பயிற்சியில் மிகவும் பயனுள்ள தலைப்புகள் எவை?':isHi?'BMT में कौन से विषय सबसे उपयोगी थे?':'Which BMT topics were most useful? (Select all that apply)');
+  s('qBDTText',           isTa?'HIH இந்தியா நடத்திய வணிக மேம்பாட்டு பயிற்சியில் (BDT) கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित व्यावसायिक विकास प्रशिक्षण (BDT) में भाग लिया?':'Have you attended Business Development Training (BDT) conducted by HIH India?');
+  s('qBDTTopicsText',     isTa?'BDT பயிற்சியில் எந்த தலைப்புகள் கவரப்பட்டன?':isHi?'BDT में कौन से विषय शामिल थे?':'Which topics were covered in BDT? (Select all that apply)');
+  s('qBDTUsefulText',     isTa?'BDT பயிற்சியில் மிகவும் பயனுள்ள தலைப்புகள் எவை?':isHi?'BDT में कौन से विषय सबसे उपयोगी थे?':'Which BDT topics were most useful? (Select all that apply)');
+  s('qSkillTrainingText', isTa?'HIH இந்தியா நடத்திய திறன் பயிற்சியில் கலந்துகொண்டீர்களா?':isHi?'क्या आपने HIH India द्वारा आयोजित कौशल प्रशिक्षण में भाग लिया?':'Have you attended any Skill Training conducted by HIH India?');
+  s('qSkillTypesText',    isTa?'எந்த வகை திறன் பயிற்சியில் கலந்துகொண்டீர்கள்?':isHi?'आपने किस प्रकार का कौशल प्रशिक्षण लिया?':'What type of skill training did you attend? (Select all that apply)');
+  s('qSkillRevenueText',  isTa?'அந்த திறனை வருவாய் ஈட்ட பயன்படுத்துகிறீர்களா?':isHi?'क्या आप उस कौशल से आय अर्जित कर रही हैं?':'Are you using that skill to generate revenue?');
+  s('qHIHSupportText',    isTa?'HIH இந்தியாவிடம் இருந்து என்ன ஆதரவு பெற்றீர்கள்?':isHi?'आपको HIH India से कौन सी सहायता मिली?':'What support have you received from HIH India? (Select all that apply)');
+  s('qUsefulSupportText', isTa?'HIH இந்தியாவிடம் இருந்து மிகவும் பயனுள்ள ஆதரவு எது?':isHi?'HIH India से सबसे उपयोगी सहायता कौन सी थी?':'Which support from HIH India was most useful? (Select all that apply)');
+  s('qFollowupText',      isTa?'HIH இந்தியாவிடம் ஆதரவு/பயிற்சி பெற்ற பிறகு என்ன நடவடிக்கைகள் எடுத்தீர்கள்?':isHi?'HIH India से सहायता/प्रशिक्षण मिलने के बाद आपने क्या अनुवर्ती गतिविधियाँ कीं?':'After receiving support/training from HIH India, what follow-up activities did you undertake? (Select all that apply)');
+  s('qOwnsEnterpriseText', isTa?'நீங்கள் ஒரு நிறுவனம்/வணிகத்தை வைத்திருக்கிறீர்களா அல்லது நடத்துகிறீர்களா?':isHi?'क्या आपके पास कोई उद्यम/व्यवसाय है?':'Do you own or run an enterprise/business?');
+  s('qEntSubtypeText',     isTa?'இது குடும்ப அடிப்படையிலான நிறுவனம் (FBE) அல்லது நுண் நிறுவனம் (ME)?':isHi?'क्या यह पारिवारिक उद्यम (FBE) है या सूक्ष्म उद्यम (ME)?':'Is this a Family-Based Enterprise (FBE) or Micro Enterprise (ME)?');
+  s('qEntStartedText',     isTa?'இந்த நிறுவனம் எப்போது தொடங்கியது?':isHi?'आपने यह उद्यम कब शुरू किया?':'When did you start this enterprise?');
+  s('qEntTypeText',        isTa?'நிறுவனம் எந்த வகை?':isHi?'उद्यम किस प्रकार का है?':'What type of enterprise is it?');
+  s('qProductsText',       isTa?'உங்கள் நிறுவனத்தின் முக்கிய தயாரிப்புகள் அல்லது சேவைகள் என்ன?':isHi?'आपके उद्यम के मुख्य उत्पाद या सेवाएं क्या हैं?':'What are the main products or services of your enterprise?');
+  s('qOwnershipText',      isTa?'உரிமையின் வகை':isHi?'स्वामित्व का प्रकार':'Type of Ownership');
+  s('qMemberRoleText',     isTa?'நிறுவனத்தில் உங்கள் பங்கு என்ன?':isHi?'उद्यम में आपकी भूमिका क्या है?':'What is your role in the enterprise?');
+  s('qRegisteredText',     isTa?'நிறுவனம் முறையாக பதிவு செய்யப்பட்டதா? (உதா: உத்யோகம், FSSAI, கடை சட்டம்)':isHi?'क्या उद्यम औपचारिक रूप से पंजीकृत है?':'Is the enterprise formally registered? (e.g. Udyam, FSSAI, Shop Act)');
+  s('qEntIncomeUpText',    isTa?'பதிவுக்கு பிறகு நிறுவன வருமானம் அதிகரித்ததா?':isHi?'पंजीकरण के बाद उद्यम की आय बढ़ी है?':'Has the enterprise income increased after registration?');
+  s('qEntIncomePctText',   isTa?'நிறுவன வருமானம் தோராயமாக எவ்வளவு அதிகரித்தது?':isHi?'उद्यम की आय लगभग कितने प्रतिशत बढ़ी?':'By approximately what percentage has enterprise income increased?');
+  s('qOpsFreqText',        isTa?'நிறுவனம் எவ்வளவு அடிக்கடி இயங்குகிறது?':isHi?'उद्यम कितनी बार संचालित होता है?':'How frequently does the enterprise operate?');
+  s('qCurrInvestText',     isTa?'நிறுவனத்தில் தற்போது மொத்த முதலீடு என்ன?':isHi?'उद्यम में वर्तमान कुल निवेश क्या है?':'What is the current total investment in the enterprise?');
+  s('qInvest2yrText',      isTa?'கடந்த 2 வருடங்களில் நிறுவனத்தில் எவ்வளவு முதலீடு செய்தீர்கள்?':isHi?'पिछले 2 वर्षों में उद्यम में कितना निवेश किया?':'How much have you invested in the enterprise in the last 2 years?');
+  s('qInvestSourceText',   isTa?'முதலீட்டின் முக்கிய ஆதாரம் என்ன? (பொருந்தும் அனைத்தையும் தேர்ந்தெடுக்கவும்)':isHi?'निवेश का मुख्य स्रोत क्या था?':'What was the main source of investment? (Select all that apply)');
+  s('qTurnoverText',       isTa?'நிறுவனத்தின் மாதாந்திர வருவாய் (INR)':isHi?'उद्यम का मासिक टर्नओवर (INR)':'Approximate monthly turnover of the enterprise (INR)');
+  s('qProfitText',         isTa?'நிறுவனத்தின் மாதாந்திர லாபம் (INR)':isHi?'उद्यम का मासिक लाभ (INR)':'Approximate monthly profit of the enterprise (INR)');
+  s('qSalesTrendText',     isTa?'கடந்த 6 மாதங்களில் விற்பனை போக்கு எப்படி இருந்தது?':isHi?'पिछले 6 महीनों में बिक्री का रुझान कैसा रहा?':'How has the sales trend been in the last 6 months?');
+  s('qRecordsText',        isTa?'நிறுவனத்திற்கான நிதி பதிவுகளை பராமரிக்கிறீர்களா?':isHi?'क्या आप अपने उद्यम के लिए वित्तीय रिकॉर्ड रखती हैं?':'Do you maintain financial records for your enterprise?');
+  s('qEmployeesText',      isTa?'நிறுவனத்தில் ஊழியர்கள் எண்ணிக்கை (இல்லையென்றால் 0 உள்ளிடவும்)':isHi?'उद्यम में कर्मचारियों की संख्या (कोई नहीं है तो 0 भरें)':'Number of employees in the enterprise (enter 0 if none)');
+  s('empCatHeader',        isTa?'வகை':isHi?'श्रेणी':'Category');
+  s('empFTHeader',         isTa?'முழுநேரம்':isHi?'पूर्णकालिक':'Full-time');
+  s('empPTHeader',         isTa?'பகுதிநேரம்':isHi?'अंशकालिक':'Part-time');
+  s('empFamilyLabel',      isTa?'குடும்ப உறுப்பினர்கள்':isHi?'परिवार के सदस्य':'Family Members');
+  s('empOutsidersLabel',   isTa?'வெளியாட்கள்':isHi?'बाहरी लोग':'Outsiders');
+  s('qUPIText',            isTa?'வணிக பரிவர்த்தனைகளுக்கு UPI/QR கோடை பயன்படுத்துகிறீர்களா?':isHi?'क्या आप व्यवसाय के लिए UPI/QR कोड का उपयोग करती हैं?':'Do you use UPI/QR code for business transactions?');
+  s('qDigitalToolsText',   isTa?'நிறுவனத்தை நிர்வகிக்க டிஜிட்டல் கருவிகளை பயன்படுத்துகிறீர்களா?':isHi?'क्या आप उद्यम प्रबंधन के लिए डिजिटल उपकरणों का उपयोग करती हैं?':'Do you use digital tools to manage your enterprise?');
+  s('qBizPlanText',        isTa?'அடுத்த 1-2 வருடங்களுக்கு எழுதப்பட்ட அல்லது மனதில் ஒரு வணிக திட்டம் உள்ளதா?':isHi?'क्या आपके पास अगले 1-2 वर्षों के लिए कोई व्यवसाय योजना है?':'Do you have a written or mental business plan for the next 1-2 years?');
+  s('qEnergyEquipText',    isTa?'நிறுவனத்தில் ஆற்றல் சேமிக்கும் உபகரணங்களை ஏற்றுக்கொண்டீர்களா?':isHi?'क्या आपने उद्यम में ऊर्जा-बचत उपकरण अपनाए हैं?':'Have you adopted any energy-saving equipment in your enterprise?');
+  s('qEnergyAuditText',    isTa?'HIH இந்தியா உங்கள் நிறுவனத்திற்கு ஆற்றல் தணிக்கை நடத்தியதா?':isHi?'क्या HIH India ने आपके उद्यम के लिए ऊर्जा ऑडिट किया है?':'Has HIH India conducted an energy audit for your enterprise?');
+  s('qCompareFinanceText', isTa?'வணிகத்திற்கு கடன் வாங்குவதற்கு முன்பு எப்போதும் வெவ்வேறு நிதி ஆதாரங்களை ஒப்பிட்டு பார்க்கிறேன்':isHi?'मैं हमेशा व्यवसाय के लिए ऋण लेने से पहले विभिन्न वित्त स्रोतों की तुलना करती हूँ':'I always compare different finance sources before taking a loan for my business');
+  s('qForecastText',       isTa?'நிறுவனத்தின் லாப தன்மையை எவ்வளவு அடிக்கடி முன்கணிக்கிறீர்கள்?':isHi?'आप अपने उद्यम की लाभप्रदता का अनुमान कितनी बार लगाती हैं?':'How often do you forecast/estimate the profitability of your enterprise?');
+  s('qAdjustExternalText', isTa?'வானிலை, சந்தை விலைகள் அல்லது அரசு கொள்கைகள் போன்ற வெளிப்புற காரணிகளின் அடிப்படையில் வணிக நடவடிக்கைகளை சரிசெய்கிறேன்':isHi?'मैं मौसम, बाजार मूल्य, या सरकारी नीतियों जैसे बाहरी कारकों के आधार पर अपने व्यवसाय को समायोजित करती हूँ':'I adjust my business operations based on external factors like weather, market prices, or government policies');
+  s('qExtraIncomeText',    isTa?'நிறுவனத்திலிருந்து கிடைக்கும் கூடுதல் வருமானம்/லாபத்தை முதன்மையாக எவ்வாறு பயன்படுத்துகிறீர்கள்?':isHi?'आप अपने उद्यम से अतिरिक्त आय/लाभ का मुख्य रूप से कैसे उपयोग करती हैं?':'How do you primarily use any extra income or profit from your enterprise?');
+  s('submitBtn',           isTa?'✅ கணக்கெடுப்பை சமர்ப்பிக்கவும்':isHi?'✅ सर्वे जमा करें':'✅ Submit Survey');
+  s('aadhaarNumLabel',     lbl.aadhaarNum);
+}
+
+// ================================================================
+//  RENDER OPTIONS
+// ================================================================
+function getOpts(key) { return (T[lang].opts && T[lang].opts[key]) || []; }
+function getEnOpts(key) { return (T['en-IN'].opts && T['en-IN'].opts[key]) || []; }
+
+function renderAllOptions() {
+  renderRadio('state',       getOpts('state'),       false, 'state');
+  renderRadio('gender',      getOpts('gender'),      false, 'gender');
+  renderRadio('marital',     getOpts('marital'),     false, 'marital');
+  renderRadio('social',      getOpts('social'),      false, 'social');
+  renderRadio('religion',    getOpts('religion'),    false, 'religion');
+  renderRadio('disability',  getOpts('yesno'),       false, 'yesno');
+  renderRadio('house',       getOpts('houseType'),   false, 'houseType');
+  renderRadio('education',   getOpts('education'),   false, 'education');
+  renderRadio('primaryincome',getOpts('primaryIncome'),true,'primaryIncome','checkBusinessDetails');
+  renderRadio('migration',   getOpts('yesno'),       false, 'yesno');
+  renderRadio('documents',   getOpts('documents'),   true,  'documents','','','other-documents');
+  renderRadio('phone',       getOpts('phone'),       false, 'phone');
+  renderRadio('hihmember',   getOpts('yesno'),       false, 'yesno','checkHIHDuration');
+  renderRadio('hihduration', getOpts('hihDuration'), false, 'hihDuration');
+  renderRadio('cln',         getOpts('yesno'),       false, 'yesno');
+  renderRadio('monthlyincome',getOpts('monthlyIncome'),false,'monthlyIncome');
+  renderRadio('incomeincrease',getOpts('yesno'),     false, 'yesno','checkIncomeIncrease');
+  renderRadio('increasepct', getOpts('increasePct'), false, 'increasePct');
+  renderRadio('contributes', getOpts('yesno'),       false, 'yesno','checkContribution');
+  renderRadio('contributionpct',getOpts('contributionPct'),false,'contributionPct');
+  renderRadio('saves',       getOpts('yesno'),       false, 'yesno','checkSavings');
+  renderRadio('savingslocation',getOpts('savingsLocation'),true,'savingsLocation','','','other-savingslocation');
+  renderRadio('shgtraining', getOpts('yesno'),       false, 'yesno','checkSHGTraining');
+  renderRadio('shgtopics',   getOpts('shgTopics'),   true,  'shgTopics','','','other-shgtopics');
+  renderRadio('shguseful',   getOpts('shgTopics'),   true,  'shgTopics','','','other-shguseful');
+  renderRadio('shgperf',     getOpts('shgPerformance'),false,'shgPerformance');
+  renderRadio('finlit',      getOpts('yesno'),       false, 'yesno','checkFinLit');
+  renderRadio('finlittopics',getOpts('finLitTopics'),true,  'finLitTopics','','','other-finlittopics');
+  renderRadio('finlituseful',getOpts('finLitTopics'),true,  'finLitTopics','','','other-finlituseful');
+  renderRadio('digital',     getOpts('yesno'),       false, 'yesno','checkDigital');
+  renderRadio('digitaltopics',getOpts('digitalTopics'),true,'digitalTopics','','','other-digitaltopics');
+  renderRadio('digitaluseful',getOpts('digitalTopics'),true,'digitalTopics','','','other-digitaluseful');
+  renderRadio('bmt',         getOpts('yesno'),       false, 'yesno','checkBMT');
+  renderRadio('bmttopics',   getOpts('bmtTopics'),   true,  'bmtTopics','','','other-bmttopics');
+  renderRadio('bmtuseful',   getOpts('bmtTopics'),   true,  'bmtTopics','','','other-bmtuseful');
+  renderRadio('bdt',         getOpts('yesno'),       false, 'yesno','checkBDT');
+  renderRadio('bdttopics',   getOpts('bdtTopics'),   true,  'bdtTopics','','','other-bdttopics');
+  renderRadio('bdtuseful',   getOpts('bdtTopics'),   true,  'bdtTopics','','','other-bdtuseful');
+  renderRadio('skilltraining',getOpts('yesno'),      false, 'yesno','checkSkillTraining');
+  renderRadio('skilltypes',  getOpts('skillTypes'),  true,  'skillTypes');
+  renderRadio('skillrevenue',getOpts('skillRevenue'),false, 'skillRevenue');
+  renderRadio('hihsupport',  getOpts('hihSupport'),  true,  'hihSupport','','','other-hihsupport');
+  renderRadio('usefulsupport',getOpts('hihSupport'), true,  'hihSupport','','','other-usefulsupport');
+  renderRadio('followup',    getOpts('followup'),    true,  'followup','','','other-followup');
+  renderRadio('ownsent',     getOpts('yesno'),       false, 'yesno','checkEnterprise');
+  renderRadio('entsubtype',  getOpts('entSubtype'),  false, 'entSubtype');
+  renderRadio('entstarted',  getOpts('entStarted'),  false, 'entStarted');
+  renderRadio('enttype',     getOpts('entType'),     false, 'entType','','','other-enttype');
+  renderRadio('ownership',   getOpts('ownership'),   false, 'ownership');
+  renderRadio('memberrole',  getOpts('memberRole'),  false, 'memberRole');
+  renderRadio('registered',  getOpts('yesno'),       false, 'yesno','checkRegistered');
+  renderRadio('entincomeup', getOpts('yesno'),       false, 'yesno','checkEntIncome');
+  renderRadio('entincomepct',getOpts('increasePct'), false, 'increasePct');
+  renderRadio('opsfreq',     getOpts('opsFreq'),     false, 'opsFreq');
+  renderRadio('currinvest',  getOpts('investment'),  false, 'investment');
+  renderRadio('invest2yr',   getOpts('investment'),  false, 'investment');
+  renderRadio('investsource',getOpts('investSource'),true,  'investSource','','','other-investsource');
+  renderRadio('turnover',    getOpts('turnover'),    false, 'turnover');
+  renderRadio('profit',      getOpts('turnover'),    false, 'turnover');
+  renderRadio('salestrend',  getOpts('salesTrend'),  false, 'salesTrend');
+  renderRadio('records',     getOpts('records'),     false, 'records');
+  renderRadio('upi',         getOpts('yesno'),       false, 'yesno');
+  renderRadio('digitaltools',getOpts('yesno'),       false, 'yesno');
+  renderRadio('bizplan',     getOpts('yesno'),       false, 'yesno');
+  renderRadio('energyequip', getOpts('yesno'),       false, 'yesno');
+  renderRadio('energyaudit', getOpts('yesno'),       false, 'yesno');
+  renderRadio('comparefinance',getOpts('businessAcumen'),false,'businessAcumen');
+  renderRadio('forecast',    getOpts('forecastFreq'),false, 'forecastFreq');
+  renderRadio('adjustexternal',getOpts('businessAcumen'),false,'businessAcumen');
+  renderRadio('extraincome', getOpts('extraIncomeUse'),false,'extraIncomeUse');
+}
+
+function renderRadio(id, labels, isMulti, enKey, onChangeFn, reserved, otherBoxId) {
+  var c = document.getElementById('opts-' + id); if (!c) return;
+  var enOpts = getEnOpts(enKey);
+  var type = isMulti ? 'checkbox' : 'radio';
+  var html = '';
+  for (var i = 0; i < labels.length; i++) {
+    var lbl = labels[i];
+    var val = (enOpts[i] !== undefined ? enOpts[i] : lbl);
+    var au  = lbl.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    var chg = '';
+    if (onChangeFn) chg += ' onchange="'+onChangeFn+'()"';
+    var isOther = (lbl.toLowerCase().indexOf('other')!==-1 || lbl.indexOf('மற்றவை')!==-1 || lbl.indexOf('अन्य')!==-1 || lbl.indexOf('बताएं')!==-1 || lbl.indexOf('குறிப்பிடவும்')!==-1);
+    if (isOther && otherBoxId) {
+      chg += ' onchange="toggleOtherBox(\''+otherBoxId+'\',this)"';
+    }
+    html += '<label class="opt-item" onclick="selectOpt(this,\''+id+'\',\''+type+'\')">'
+      + '<input type="'+type+'" name="'+id+'" value="'+val.replace(/"/g,'&quot;')+'"'+chg+' onchange="updateOptStyle(this)">'
+      + '<span class="opt-label">'+lbl+'</span>'
+      + '<button class="opt-audio" onclick="event.stopPropagation();event.preventDefault();speakText(\''+au+'\',\'\')">🔊</button>'
+      + '</label>';
+  }
+  c.innerHTML = html;
+}
+
+function toggleOtherBox(boxId, inp) {
+  var box = document.getElementById(boxId); if (!box) return;
+  if (inp.type === 'radio') {
+    box.classList[inp.checked ? 'add' : 'remove']('visible');
+  } else {
+    var hasOther = false;
+    var siblings = document.querySelectorAll('input[name="'+inp.name+'"]');
+    siblings.forEach(function(s) {
+      var isO = (s.value.toLowerCase().indexOf('other')!==-1);
+      if (isO && s.checked) hasOther = true;
+    });
+    box.classList[hasOther ? 'add' : 'remove']('visible');
+  }
+}
+
+function checkBusinessDetails() {
+  var checked = document.querySelectorAll('input[name="primaryincome"]:checked');
+  var hasBiz = false;
+  checked.forEach(function(c){ if (c.value.toLowerCase().indexOf('business')!==-1||c.value.toLowerCase().indexOf('shop')!==-1||c.value.toLowerCase().indexOf('trade')!==-1) hasBiz=true; });
+  showHide('qBusinessDetails', hasBiz);
+  var otherBox = document.getElementById('other-primaryincome');
+  var hasOther = false;
+  checked.forEach(function(c){ if(c.value.toLowerCase().indexOf('other')!==-1) hasOther=true; });
+  if (otherBox) otherBox.classList[hasOther?'add':'remove']('visible');
+}
+
+function selectOpt(labelEl, id, type) {
+  if (type === 'radio') {
+    document.querySelectorAll('#opts-'+id+' .opt-item').forEach(function(e){e.classList.remove('selected');});
+    labelEl.classList.add('selected');
+    var inp = labelEl.querySelector('input');
+    if (inp) { inp.checked = true; inp.dispatchEvent(new Event('change',{bubbles:true})); }
+  } else {
+    var inp = labelEl.querySelector('input');
+    if (inp) {
+      inp.checked = !inp.checked;
+      labelEl.classList[inp.checked?'add':'remove']('selected');
+      inp.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+  }
+}
+
+function updateOptStyle(inp) {
+  var l = inp.closest('.opt-item');
+  if (l) l.classList[inp.checked?'add':'remove']('selected');
+}
+
+function getSelected(id, isMulti) {
+  var inputs = document.querySelectorAll('input[name="'+id+'"]:checked');
+  var vals = [];
+  inputs.forEach(function(i){vals.push(i.value);});
+  return isMulti ? vals.join(', ') : (vals[0]||'');
+}
+
+// ================================================================
+//  CONDITIONAL LOGIC
+// ================================================================
+function checkHIHDuration()   { showHide('qHIHDuration',   getSelected('hihmember',false)==='Yes'); }
+function checkIncomeIncrease(){ showHide('qIncreasePct',   getSelected('incomeincrease',false)==='Yes'); }
+function checkContribution()  { showHide('qContributionPct',getSelected('contributes',false)==='Yes'); }
+function checkSavings()       { showHide('qSavingsLocation',getSelected('saves',false)==='Yes'); }
+function checkSHGTraining()   {
+  var y = getSelected('shgtraining',false)==='Yes';
+  showHide('qSHGTopics',y); showHide('qSHGUseful',y); showHide('qSHGPerformance',y);
+}
+function checkFinLit()        {
+  var y = getSelected('finlit',false)==='Yes';
+  showHide('qFinLitTopics',y); showHide('qFinLitUseful',y);
+}
+function checkDigital()       {
+  var y = getSelected('digital',false)==='Yes';
+  showHide('qDigitalTopics',y); showHide('qDigitalUseful',y);
+}
+function checkBMT()           {
+  var y = getSelected('bmt',false)==='Yes';
+  showHide('qBMTTopics',y); showHide('qBMTUseful',y);
+}
+function checkBDT()           {
+  var y = getSelected('bdt',false)==='Yes';
+  showHide('qBDTTopics',y); showHide('qBDTUseful',y);
+}
+function checkSkillTraining() {
+  var y = getSelected('skilltraining',false)==='Yes';
+  showHide('qSkillTypes',y); showHide('qSkillRevenue',y);
+  showHide('qHIHSupport',y); showHide('qUsefulSupport',y);
+}
+function checkEnterprise()    { showHide('sectionDEnterprise', getSelected('ownsent',false)==='Yes'); }
+function checkRegistered()    { showHide('qEntIncomeUp', getSelected('registered',false)==='Yes'); }
+function checkEntIncome()     { showHide('qEntIncomePct',getSelected('entincomeup',false)==='Yes'); }
+
+function showHide(id, show) {
+  var el = document.getElementById(id); if (!el) return;
+  if (show) el.classList.remove('hidden'); else el.classList.add('hidden');
+}
+
+// ================================================================
+//  TTS
+// ================================================================
+function speakQText(qTextElemId, btnId) {
+  var el = document.getElementById(qTextElemId);
+  if (!el) return;
+  var text = el.textContent.trim();
+  if (text) speakText(text, btnId);
+}
+
+// NEW: Matrix question speaker — reads question + row/col labels
+function speakMatrixQuestion(matrixType, btnId) {
+  var text = '';
+  var isTa = lang==='ta-IN', isHi = lang==='hi-IN';
+  if (matrixType === 'family') {
+    var qEl = document.getElementById('qFamilyText');
+    var q = qEl ? qEl.textContent.trim() : '';
+    var below18 = document.getElementById('famBelow18') ? document.getElementById('famBelow18').textContent.trim() : 'Below 18 years';
+    var above18 = document.getElementById('fam18Above') ? document.getElementById('fam18Above').textContent.trim() : '18 years and above';
+    var male = document.getElementById('famMaleHeader') ? document.getElementById('famMaleHeader').textContent.trim() : 'Male';
+    var female = document.getElementById('famFemaleHeader') ? document.getElementById('famFemaleHeader').textContent.trim() : 'Female';
+    var sep = isTa ? '. ' : isHi ? '. ' : '. ';
+    var enterNum = isTa ? 'எண்ணிக்கையை உள்ளிடவும்' : isHi ? 'संख्या दर्ज करें' : 'Enter number';
+    text = q + sep
+      + below18 + ' - ' + male + ': ' + enterNum + sep
+      + below18 + ' - ' + female + ': ' + enterNum + sep
+      + above18 + ' - ' + male + ': ' + enterNum + sep
+      + above18 + ' - ' + female + ': ' + enterNum;
+  } else if (matrixType === 'employees') {
+    var qEl2 = document.getElementById('qEmployeesText');
+    var q2 = qEl2 ? qEl2.textContent.trim() : '';
+    var famLbl = document.getElementById('empFamilyLabel') ? document.getElementById('empFamilyLabel').textContent.trim() : 'Family Members';
+    var outLbl = document.getElementById('empOutsidersLabel') ? document.getElementById('empOutsidersLabel').textContent.trim() : 'Outsiders';
+    var ft = document.getElementById('empFTHeader') ? document.getElementById('empFTHeader').textContent.trim() : 'Full-time';
+    var pt = document.getElementById('empPTHeader') ? document.getElementById('empPTHeader').textContent.trim() : 'Part-time';
+    var sep2 = '. ';
+    var enterNum2 = isTa ? 'எண்ணிக்கையை உள்ளிடவும்' : isHi ? 'संख्या दर्ज करें' : 'Enter number';
+    text = q2 + sep2
+      + famLbl + ' - ' + ft + ': ' + enterNum2 + sep2
+      + famLbl + ' - ' + pt + ': ' + enterNum2 + sep2
+      + outLbl + ' - ' + ft + ': ' + enterNum2 + sep2
+      + outLbl + ' - ' + pt + ': ' + enterNum2;
+  }
+  if (text) speakText(text, btnId);
+}
+
+function speakText(text, btnId) {
+  if (!text || !text.trim()) return;
+  if (ttsActive) { stopAllAudio(); if (activeBtnId===btnId && btnId) return; }
+  activeBtnId = btnId;
+  if (btnId) setBtnState(btnId, true, 'loading');
+  var tl = LANG_TTS[lang] || 'en';
+  if (tl === 'en') {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang='en-IN'; u.rate=0.85; u.volume=1;
+      u.onstart=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
+      u.onend=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);};
+      u.onerror=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);};
+      window.speechSynthesis.speak(u);
+    } else { if(btnId)setBtnState(btnId,false); showTextPopup(text); }
+    return;
+  }
+  var inGAS=(typeof google!=='undefined'&&google.script&&google.script.run);
+  if (inGAS) {
+    google.script.run
+      .withSuccessHandler(function(b64){
+        if(!b64){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);return;}
+        stopAllAudio();
+        currentAudio=new Audio('data:audio/mpeg;base64,'+b64); currentAudio.volume=1;
+        currentAudio.onplay=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
+        currentAudio.onended=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);currentAudio=null;};
+        currentAudio.onerror=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);currentAudio=null;};
+        currentAudio.play().catch(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);});
+      })
+      .withFailureHandler(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);})
+      .TTSAudio(text,tl);
+  } else {
+    // Use Google Translate TTS for Tamil and Hindi
+    tl = LANG_TTS[lang] || 'ta';
+    var encoded = encodeURIComponent(text.substring(0, 180));
+    var proxyUrl = 'https://api.allorigins.win/raw?url=' 
+      + encodeURIComponent(
+          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
+          + encoded + '&tl=' + tl + '&client=gtx'
+        );
+    stopAllAudio();
+    if (btnId) setBtnState(btnId, true, 'loading');
+    fetch(proxyUrl)
+      .then(function(r){ return r.blob(); })
+      .then(function(blob){
+        var blobUrl = URL.createObjectURL(blob);
+        currentAudio = new Audio(blobUrl);
+        currentAudio.volume = 1;
+        currentAudio.onplay = function(){ ttsActive=true; if(btnId) setBtnState(btnId,true,'playing'); };
+        currentAudio.onended = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; URL.revokeObjectURL(blobUrl); };
+        currentAudio.onerror = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; showTextPopup(text); };
+        currentAudio.play().catch(function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text); });
+      })
+      .catch(function(){
+        ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text);
+      });
+  }
+}
+
+function stopAllAudio() {
+  if ('speechSynthesis' in window) { try{window.speechSynthesis.cancel();}catch(e){} }
+  if (currentAudio) { try{currentAudio.pause();currentAudio.currentTime=0;}catch(e){} currentAudio=null; }
+  ttsActive=false;
+  if (activeBtnId) setBtnState(activeBtnId,false);
+  activeBtnId=null;
+}
+
+function setBtnState(btnId,on,state) {
+  if (!btnId) return;
+  var b=document.getElementById(btnId); if(!b) return;
+  b.classList.remove('loading','playing');
+  if(!on){b.textContent='🔊';return;}
+  if(state==='loading'){b.textContent='⏳';b.classList.add('loading');}
+  else{b.textContent='⏹️';b.classList.add('playing');}
+}
+
+function showTextPopup(text) {
+  var p=document.getElementById('tts-popup'); if(!p) return;
+  p.textContent='🔊 '+text.substring(0,200)+(text.length>200?'…':'');
+  p.style.display='block'; clearTimeout(p._t);
+  p._t=setTimeout(function(){p.style.display='none';},6000);
+}
+
+// ================================================================
+//  CONSENT AUDIO
+// ================================================================
+function toggleConsentAudio() {
+  if (ttsActive && activeBtnId==='btn-consent-audio') { stopAllAudio(); _consentChunks=[]; _consentChunkIdx=0; return; }
+  var fullText = T[lang].consent.text;
+  if (lang==='en-IN') { speakText(fullText,'btn-consent-audio'); return; }
+  _consentChunks = _splitIntoChunks(fullText);
+  _consentChunkIdx=0; activeBtnId='btn-consent-audio'; setBtnState('btn-consent-audio',true,'loading');
+  _speakChunks(_consentChunks, _consentChunkIdx, 'btn-consent-audio', function(idx){ _consentChunkIdx=idx; });
+}
+
+function toggleAadhaarConsentAudio() {
+  if (ttsActive && activeBtnId==='btn-aadhaar-consent-audio') { stopAllAudio(); _aadhaarConsentChunks=[]; _aadhaarConsentChunkIdx=0; return; }
+  var fullText = T[lang].consent.aadhaarText;
+  if (lang==='en-IN') { speakText(fullText,'btn-aadhaar-consent-audio'); return; }
+  _aadhaarConsentChunks = _splitIntoChunks(fullText);
+  _aadhaarConsentChunkIdx=0; activeBtnId='btn-aadhaar-consent-audio'; setBtnState('btn-aadhaar-consent-audio',true,'loading');
+  _speakChunks(_aadhaarConsentChunks, _aadhaarConsentChunkIdx, 'btn-aadhaar-consent-audio', function(idx){ _aadhaarConsentChunkIdx=idx; });
+}
+
+function _splitIntoChunks(fullText) {
+  var sentences = fullText.split(/(?<=[।.!?\n])\s*/u).filter(function(s){return s.trim().length>0;});
+  var chunks=[], chunk='';
+  for(var i=0;i<sentences.length;i++){
+    var s=sentences[i].trim(); if(!s) continue;
+    if((chunk+' '+s).trim().length<=190){chunk=(chunk+' '+s).trim();}
+    else{if(chunk)chunks.push(chunk);chunk=s;}
+  }
+  if(chunk)chunks.push(chunk);
+  return chunks;
+}
+
+function _speakChunks(chunks, startIdx, btnId, onIdxUpdate) {
+  if(startIdx >= chunks.length){ stopAllAudio(); return; }
+  var chunk = chunks[startIdx];
+  var inGAS=(typeof google!=='undefined'&&google.script&&google.script.run);
+  var tl=LANG_TTS[lang]||'en';
+  if(inGAS){
+    google.script.run
+      .withSuccessHandler(function(b64){
+        if(!b64){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);return;}
+        stopAllAudio(); activeBtnId=btnId;
+        currentAudio=new Audio('data:audio/mpeg;base64,'+b64); currentAudio.volume=1;
+        currentAudio.onplay=function(){ttsActive=true;setBtnState(btnId,true,'playing');};
+        currentAudio.onended=function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
+        currentAudio.onerror=function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
+        currentAudio.play().catch(function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);});
+      })
+      .withFailureHandler(function(){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);})
+      .TTSAudio(chunk,tl);
+  } else {
+    var tl2 = LANG_TTS[lang] || 'ta';
+    var encoded2 = encodeURIComponent(chunk.substring(0, 180));
+    var proxyUrl2 = 'https://api.allorigins.win/raw?url='
+      + encodeURIComponent(
+          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
+          + encoded2 + '&tl=' + tl2 + '&client=gtx'
+        );
+    fetch(proxyUrl2)
+      .then(function(r){ return r.blob(); })
+      .then(function(blob){
+        var blobUrl = URL.createObjectURL(blob);
+        stopAllAudio(); activeBtnId = btnId;
+        currentAudio = new Audio(blobUrl);
+        currentAudio.volume = 1;
+        currentAudio.onplay = function(){ ttsActive=true; setBtnState(btnId,true,'playing'); };
+        currentAudio.onended = function(){ ttsActive=false; currentAudio=null; URL.revokeObjectURL(blobUrl); onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
+        currentAudio.onerror = function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
+        currentAudio.play().catch(function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
+      })
+      .catch(function(){ onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
+  }
+}
+
+// ================================================================
+//  MICROPHONE — FIXED with permissions + numeric conversion
+// ================================================================
+
+// Convert spoken words to numbers (English, Tamil, Hindi)
+function wordsToNumber(transcript) {
+  var t = transcript.trim().toLowerCase();
+  // If already a number string, return as-is
+  if (/^\d+$/.test(t)) return t;
+
+  // English word map
+  var enMap = {
+    'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,
+    'eight':8,'nine':9,'ten':10,'eleven':11,'twelve':12,'thirteen':13,
+    'fourteen':14,'fifteen':15,'sixteen':16,'seventeen':17,'eighteen':18,
+    'nineteen':19,'twenty':20,'thirty':30,'forty':40,'fifty':50,
+    'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100,'thousand':1000
+  };
+  // Tamil digit words
+  var taMap = {
+    'பூஜ்யம்':0,'ஒன்று':1,'இரண்டு':2,'மூன்று':3,'நான்கு':4,'ஐந்து':5,
+    'ஆறு':6,'ஏழு':7,'எட்டு':8,'ஒன்பது':9,'பத்து':10,'நூறு':100
+  };
+  // Hindi digit words
+  var hiMap = {
+    'शून्य':0,'एक':1,'दो':2,'तीन':3,'चार':4,'पाँच':5,'पांच':5,
+    'छह':6,'सात':7,'आठ':8,'नौ':9,'दस':10,'सौ':100,'हजार':1000
+  };
+
+  // Check Tamil
+  var tOrig = transcript.trim();
+  for (var tk in taMap) {
+    if (tOrig.indexOf(tk) !== -1) return String(taMap[tk]);
+  }
+  // Check Hindi
+  for (var hk in hiMap) {
+    if (tOrig.indexOf(hk) !== -1) return String(hiMap[hk]);
+  }
+
+  // Try English compound numbers (e.g. "twenty five" = 25)
+  var words = t.split(/[\s-]+/);
+  var total = 0, current = 0, found = false;
+  for (var i = 0; i < words.length; i++) {
+    var w = words[i];
+    if (enMap[w] !== undefined) {
+      found = true;
+      var n = enMap[w];
+      if (n === 1000) { total = (total + current) * n; current = 0; }
+      else if (n === 100) { current *= n; }
+      else { current += n; }
+    }
+  }
+  if (found) return String(total + current);
+  return transcript; // return original if no conversion
+}
+
+function startMic(field) {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert(lang==='ta-IN'?'குரல் உள்ளீட்டிற்கு Google Chrome பயன்படுத்தவும்.':
+          lang==='hi-IN'?'वॉइस इनपुट के लिए Google Chrome का उपयोग करें।':
+          'Please use Google Chrome for voice input.');
+    return;
+  }
+
+  var btn = document.getElementById('mic-'+field);
+
+  // If already recording this field, stop it
+  if (isRec && curMicField === field) {
+    if (recog) { try { recog.stop(); } catch(e){} }
+    return;
+  }
+  // If recording a different field, stop previous first
+  if (isRec && recog) {
+    try { recog.stop(); } catch(e){}
+    isRec = false;
+    if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent='🎤'; }
+  }
+
+  // Determine if target field is numeric
+  var targetEl = document.getElementById(field+'Text') || document.getElementById(field+'Audio');
+  var isNumericField = false;
+  if (targetEl) {
+    isNumericField = (targetEl.type === 'number') ||
+      (field === 'age') || (field === 'aadhaar') ||
+      (field === 'familyBelow18Male') || (field === 'familyBelow18Female') ||
+      (field === 'family18AboveMale') || (field === 'family18AboveFemale') ||
+      (field === 'empFamilyFulltime') || (field === 'empFamilyParttime') ||
+      (field === 'empOutsidersFulltime') || (field === 'empOutsidersParttime');
+  }
+  // Also check by element id directly for matrix fields (they have no Audio pair)
+  var directNumericIds = ['familyBelow18Male','familyBelow18Female','family18AboveMale','family18AboveFemale',
+                          'empFamilyFulltime','empFamilyParttime','empOutsidersFulltime','empOutsidersParttime'];
+
+  // Request mic permission explicitly first, then start recognition
+  _doStartRecognition(field, btn, isNumericField, directNumericIds);
+}
+
+function _doStartRecognition(field, btn, isNumericField, directNumericIds) {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recog = new SR();
+  recog.lang = lang;
+  recog.interimResults = false;
+  recog.maxAlternatives = 1;
+  recog.continuous = false;
+
+  recog.onstart = function() {
+    isRec = true;
+    curMicBtn = btn;
+    curMicField = field;
+    if (btn) { btn.classList.add('recording'); btn.textContent = '⏹️'; }
+  };
+
+  recog.onresult = function(e) {
+    if (!e.results || !e.results.length) return;
+    var transcript = e.results[0][0].transcript.trim();
+
+    // Determine where to put the result
+    var textEl  = document.getElementById(field+'Text');
+    var audioEl = document.getElementById(field+'Audio');
+
+    // Check if field is a direct numeric element (matrix inputs)
+    var isDirect = (directNumericIds.indexOf(field) !== -1);
+
+    if (isDirect) {
+      // Matrix field: direct number input element
+      var directEl = document.getElementById(field);
+      if (directEl) {
+        var num = wordsToNumber(transcript);
+        directEl.value = /^\d+$/.test(num) ? num : transcript;
+      }
+    } else if (isNumericField && textEl && textEl.type === 'number') {
+      // Numeric text field (age, aadhaar)
+      var converted = wordsToNumber(transcript);
+      textEl.value = /^\d+$/.test(converted) ? converted : transcript;
+      if (audioEl) audioEl.value = transcript;
+    } else {
+      // Regular text field
+      if (audioEl) audioEl.value = transcript;
+      else if (textEl) textEl.value = transcript;
+    }
+  };
+
+  recog.onend = function() {
+    isRec = false;
+    curMicField = null;
+    if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent = '🎤'; curMicBtn = null; }
+  };
+
+  recog.onerror = function(e) {
+    isRec = false;
+    curMicField = null;
+    if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent = '🎤'; curMicBtn = null; }
+    if (e.error === 'not-allowed' || e.error === 'permission-denied') {
+      var msg = lang==='ta-IN' ? 'மைக்ரோஃபோன் அனுமதிக்கு, லிங்கை புதிய டேப்பில் திறக்கவும்.' :
+                lang==='hi-IN' ? 'माइक्रोफोन के लिए लिंक को नए टैब में खोलें।' :
+                'For microphone access, please open this link in a new tab directly.';
+      alert(msg);
+    }
+  };
+
+  try {
+    recog.start();
+  } catch(e) {
+    isRec = false;
+    curMicField = null;
+    if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤'; }
+  }
+}
+
+// ================================================================
+//  PROCESSING OVERLAY
+// ================================================================
+function showProcessingOverlay(on) {
+  var ov=document.getElementById('submit-overlay'); if(!ov) return;
+  var isTa=(lang==='ta-IN'),isHi=(lang==='hi-IN');
+  if(on){
+    document.getElementById('overlay-msg').textContent=isTa?'⏳ கணக்கெடுப்பை சமர்ப்பிக்கிறோம்…':isHi?'⏳ सर्वे जमा किया जा रहा है…':'⏳ Submitting your survey…';
+    document.getElementById('overlay-submsg').textContent=isTa?'காத்திருக்கவும். பக்கத்தை மூடாதீர்கள்.':isHi?'कृपया प्रतीक्षा करें। पेज बंद न करें।':'Please wait. Do not close this page.';
+    ov.classList.add('visible');
+  } else {
+    ov.classList.remove('visible');
+  }
+}
+
+// ================================================================
+//  SUBMIT
+// ================================================================
+function submitForm() {
+  stopAllAudio();
+  if (formSubmitted) { showStatus('✅ Survey already submitted.','success'); return; }
+  var isTa=(lang==='ta-IN'), isHi=(lang==='hi-IN');
+  function req(id,en,ta,hi){ var e=document.getElementById(id);if(!e)return true;if(!(e.value||'').toString().trim()){showStatus('❌ '+(isTa?ta:isHi?hi:en),'error');e.focus();return false;}return true;}
+  function reqSel(name,en,ta,hi){ if(!document.querySelector('input[name="'+name+'"]:checked')){showStatus('❌ '+(isTa?ta:isHi?hi:en),'error');return false;}return true;}
+  function reqEither(id1,id2,en,ta,hi){ var v1=(document.getElementById(id1)||{}).value||'';var v2=(document.getElementById(id2)||{}).value||'';if(!v1.trim()&&!v2.trim()){showStatus('❌ '+(isTa?ta:isHi?hi:en),'error');return false;}return true;}
+
+  if (!reqEither('villageText','villageAudio','Please enter Village name.','கிராமம் உள்ளிடவும்.','गाँव का नाम भरें।')) return;
+  if (!reqEither('nameText','nameAudio','Please enter Respondent Name.','பதிலளிப்பவர் பெயர் உள்ளிடவும்.','उत्तरदाता का नाम भरें।')) return;
+  if (!req('ageText','Please enter Age.','வயதை உள்ளிடவும்.','आयु भरें।')) return;
+  if (!reqSel('gender','Please select Gender.','பாலினம் தேர்ந்தெடுக்கவும்.','लिंग चुनें।')) return;
+  if (!reqSel('marital','Please select Marital Status.','திருமண நிலை தேர்ந்தெடுக்கவும்.','वैवाहिक स्थिति चुनें।')) return;
+  if (!reqSel('social','Please select Social Category.','சமூக வகை தேர்ந்தெடுக்கவும்.','सामाजिक श्रेணी चुनें।')) return;
+  if (!reqSel('education','Please select Education Level.','கல்வி நிலை தேர்ந்தெடுக்கவும்.','शिक्षा स्तर चुनें।')) return;
+  if (!reqSel('primaryincome','Please select Primary Income source.','வருமான ஆதாரம் தேர்ந்தெடுக்கவும்.','आय का स्रोत चुनें।')) return;
+  if (!reqSel('hihmember','Please answer: Are you a HIH SHG member?','HIH SHG உறுப்பினர் பதில் தேர்ந்தெடுக்கவும்.','HIH SHG सदस्यता का जवाब चुनें।')) return;
+  if (!reqSel('monthlyincome','Please select Monthly Income range.','மாதாந்திர வருமான வரம்பு தேர்ந்தெடுக்கவும்.','मासिक आय सीमा चुनें।')) return;
+  if (!reqSel('incomeincrease','Please answer: Has income increased?','வருமானம் அதிகரிப்பு பதில் தேர்ந்தெடுக்கவும்.','आय वृद्धि का जवाब चुनें।')) return;
+  if (!reqSel('contributes','Please answer: Do you contribute to income?','வருமான பங்களிப்பு பதில் தேர்ந்தெடுக்கவும்.','आय योगदान का जवाब चुनें।')) return;
+  if (!reqSel('saves','Please answer: Do you save income?','சேமிப்பு பதில் தேர்ந்தெடுக்கவும்.','बचत का जवाब चुनें।')) return;
+  if (!reqSel('ownsent','Please answer: Do you own an enterprise?','நிறுவன நிலவரம் தேர்ந்தெடுக்கவும்.','उद्यम का जवाब चुनें।')) return;
+
+  showProcessingOverlay(true);
+  document.getElementById('submitBtn').disabled = true;
+
+  var d = {
+    langCode:              lang,
+    gpsLat:                gpsLat,
+    gpsLng:                gpsLng,
+    surveyDate:            (document.getElementById('dateDisplay')||{}).textContent||'',
+    consent:               'Yes',
+    aadhaarConsent:        document.getElementById('aadhaarConsentYes').checked ? 'Yes' : 'No',
+    aadhaarText:           (document.getElementById('aadhaarText')||{}).value||'',
+    aadhaarAudio:          (document.getElementById('aadhaarAudio')||{}).value||'',
+    state:                 getSelected('state',false),
+    districtText:          (document.getElementById('districtText')||{}).value||'',
+    districtAudio:         (document.getElementById('districtAudio')||{}).value||'',
+    blockText:             (document.getElementById('blockText')||{}).value||'',
+    blockAudio:            (document.getElementById('blockAudio')||{}).value||'',
+    panchayatText:         (document.getElementById('panchayatText')||{}).value||'',
+    panchayatAudio:        (document.getElementById('panchayatAudio')||{}).value||'',
+    villageText:           (document.getElementById('villageText')||{}).value||'',
+    villageAudio:          (document.getElementById('villageAudio')||{}).value||'',
+    nameText:              (document.getElementById('nameText')||{}).value||'',
+    nameAudio:             (document.getElementById('nameAudio')||{}).value||'',
+    ageText:               (document.getElementById('ageText')||{}).value||'',
+    ageAudio:              (document.getElementById('ageAudio')||{}).value||'',
+    gender:                getSelected('gender',false),
+    maritalStatus:         getSelected('marital',false),
+    socialCategory:        getSelected('social',false),
+    religion:              getSelected('religion',false),
+    disabilityStatus:      getSelected('disability',false),
+    houseType:             getSelected('house',false),
+    familyBelow18Male:     (document.getElementById('familyBelow18Male')||{}).value||'0',
+    familyBelow18Female:   (document.getElementById('familyBelow18Female')||{}).value||'0',
+    family18AboveMale:     (document.getElementById('family18AboveMale')||{}).value||'0',
+    family18AboveFemale:   (document.getElementById('family18AboveFemale')||{}).value||'0',
+    educationLevel:        getSelected('education',false),
+    primaryIncome:         getSelected('primaryincome',true),
+    primaryIncomeOtherText:(document.getElementById('primaryIncomeOtherText')||{}).value||'',
+    primaryIncomeOtherAudio:(document.getElementById('primaryIncomeOtherAudio')||{}).value||'',
+    businessDetailsText:   (document.getElementById('businessDetailsText')||{}).value||'',
+    businessDetailsAudio:  (document.getElementById('businessDetailsAudio')||{}).value||'',
+    familyMigration:       getSelected('migration',false),
+    documents:             getSelected('documents',true),
+    documentsOtherText:    (document.getElementById('documentsOtherText')||{}).value||'',
+    documentsOtherAudio:   (document.getElementById('documentsOtherAudio')||{}).value||'',
+    phoneAvailability:     getSelected('phone',false),
+    mobileText:            (document.getElementById('mobileText')||{}).value||'',
+    mobileAudio:           (document.getElementById('mobileAudio')||{}).value||'',
+    hihSHGMember:          getSelected('hihmember',false),
+    hihDuration:           getSelected('hihduration',false),
+    clnMember:             getSelected('cln',false),
+    monthlyIncome:         getSelected('monthlyincome',false),
+    incomeIncreased:       getSelected('incomeincrease',false),
+    incomeIncreasePct:     getSelected('increasepct',false),
+    contributesIncome:     getSelected('contributes',false),
+    contributionPct:       getSelected('contributionpct',false),
+    savesIncome:           getSelected('saves',false),
+    savingsLocation:       getSelected('savingslocation',true),
+    savingsOtherText:      (document.getElementById('savingsOtherText')||{}).value||'',
+    savingsOtherAudio:     (document.getElementById('savingsOtherAudio')||{}).value||'',
+    shgTraining:           getSelected('shgtraining',false),
+    shgTopics:             getSelected('shgtopics',true),
+    shgTopicsOtherText:    (document.getElementById('shgTopicsOtherText')||{}).value||'',
+    shgTopicsOtherAudio:   (document.getElementById('shgTopicsOtherAudio')||{}).value||'',
+    shgUsefulTopics:       getSelected('shguseful',true),
+    shgUsefulOtherText:    (document.getElementById('shgUsefulOtherText')||{}).value||'',
+    shgUsefulOtherAudio:   (document.getElementById('shgUsefulOtherAudio')||{}).value||'',
+    shgPerformance:        getSelected('shgperf',false),
+    finLitTraining:        getSelected('finlit',false),
+    finLitTopics:          getSelected('finlittopics',true),
+    finLitTopicsOtherText: (document.getElementById('finLitTopicsOtherText')||{}).value||'',
+    finLitTopicsOtherAudio:(document.getElementById('finLitTopicsOtherAudio')||{}).value||'',
+    finLitUseful:          getSelected('finlituseful',true),
+    finLitUsefulOtherText: (document.getElementById('finLitUsefulOtherText')||{}).value||'',
+    finLitUsefulOtherAudio:(document.getElementById('finLitUsefulOtherAudio')||{}).value||'',
+    digitalTraining:       getSelected('digital',false),
+    digitalTopics:         getSelected('digitaltopics',true),
+    digitalTopicsOtherText:(document.getElementById('digitalTopicsOtherText')||{}).value||'',
+    digitalTopicsOtherAudio:(document.getElementById('digitalTopicsOtherAudio')||{}).value||'',
+    digitalUseful:         getSelected('digitaluseful',true),
+    digitalUsefulOtherText:(document.getElementById('digitalUsefulOtherText')||{}).value||'',
+    digitalUsefulOtherAudio:(document.getElementById('digitalUsefulOtherAudio')||{}).value||'',
+    bmtTraining:           getSelected('bmt',false),
+    bmtTopics:             getSelected('bmttopics',true),
+    bmtTopicsOtherText:    (document.getElementById('bmtTopicsOtherText')||{}).value||'',
+    bmtTopicsOtherAudio:   (document.getElementById('bmtTopicsOtherAudio')||{}).value||'',
+    bmtUseful:             getSelected('bmtuseful',true),
+    bmtUsefulOtherText:    (document.getElementById('bmtUsefulOtherText')||{}).value||'',
+    bmtUsefulOtherAudio:   (document.getElementById('bmtUsefulOtherAudio')||{}).value||'',
+    bdtTraining:           getSelected('bdt',false),
+    bdtTopics:             getSelected('bdttopics',true),
+    bdtTopicsOtherText:    (document.getElementById('bdtTopicsOtherText')||{}).value||'',
+    bdtTopicsOtherAudio:   (document.getElementById('bdtTopicsOtherAudio')||{}).value||'',
+    bdtUseful:             getSelected('bdtuseful',true),
+    bdtUsefulOtherText:    (document.getElementById('bdtUsefulOtherText')||{}).value||'',
+    bdtUsefulOtherAudio:   (document.getElementById('bdtUsefulOtherAudio')||{}).value||'',
+    skillTraining:         getSelected('skilltraining',false),
+    skillTypes:            getSelected('skilltypes',true),
+    skillRevenue:          getSelected('skillrevenue',false),
+    hihSupport:            getSelected('hihsupport',true),
+    hihSupportOtherText:   (document.getElementById('hihSupportOtherText')||{}).value||'',
+    hihSupportOtherAudio:  (document.getElementById('hihSupportOtherAudio')||{}).value||'',
+    usefulSupport:         getSelected('usefulsupport',true),
+    usefulSupportOtherText:(document.getElementById('usefulSupportOtherText')||{}).value||'',
+    usefulSupportOtherAudio:(document.getElementById('usefulSupportOtherAudio')||{}).value||'',
+    followupActivities:    getSelected('followup',true),
+    followupOtherText:     (document.getElementById('followupOtherText')||{}).value||'',
+    followupOtherAudio:    (document.getElementById('followupOtherAudio')||{}).value||'',
+    ownsEnterprise:        getSelected('ownsent',false),
+    enterpriseSubtype:     getSelected('entsubtype',false),
+    enterpriseStarted:     getSelected('entstarted',false),
+    enterpriseType:        getSelected('enttype',false),
+    enterpriseTypeOtherText:(document.getElementById('enterpriseTypeOtherText')||{}).value||'',
+    enterpriseTypeOtherAudio:(document.getElementById('enterpriseTypeOtherAudio')||{}).value||'',
+    productsText:          (document.getElementById('productsText')||{}).value||'',
+    productsAudio:         (document.getElementById('productsAudio')||{}).value||'',
+    ownershipType:         getSelected('ownership',false),
+    memberRole:            getSelected('memberrole',false),
+    enterpriseRegistered:  getSelected('registered',false),
+    enterpriseIncomeUp:    getSelected('entincomeup',false),
+    enterpriseIncomePct:   getSelected('entincomepct',false),
+    operationsFreq:        getSelected('opsfreq',false),
+    currentInvestment:     getSelected('currinvest',false),
+    investmentLast2Yrs:    getSelected('invest2yr',false),
+    investmentSource:      getSelected('investsource',true),
+    investmentSrcOtherText:(document.getElementById('investmentSrcOtherText')||{}).value||'',
+    investmentSrcOtherAudio:(document.getElementById('investmentSrcOtherAudio')||{}).value||'',
+    monthlyTurnover:       getSelected('turnover',false),
+    monthlyProfit:         getSelected('profit',false),
+    salesTrend:            getSelected('salestrend',false),
+    recordsMaintained:     getSelected('records',false),
+    empFamilyFulltime:     (document.getElementById('empFamilyFulltime')||{}).value||'0',
+    empFamilyParttime:     (document.getElementById('empFamilyParttime')||{}).value||'0',
+    empOutsidersFulltime:  (document.getElementById('empOutsidersFulltime')||{}).value||'0',
+    empOutsidersParttime:  (document.getElementById('empOutsidersParttime')||{}).value||'0',
+    upiUsed:               getSelected('upi',false),
+    digitalTools:          getSelected('digitaltools',false),
+    businessPlan:          getSelected('bizplan',false),
+    energyEquipment:       getSelected('energyequip',false),
+    energyAudit:           getSelected('energyaudit',false),
+    compareFinance:        getSelected('comparefinance',false),
+    forecastProfit:        getSelected('forecast',false),
+    adjustExternal:        getSelected('adjustexternal',false),
+    extraIncomeUse:        getSelected('extraincome',false)
+  };
+
+  window._submitName = d.nameText || d.nameAudio || '';
+  window._submitVillage = d.villageText || d.villageAudio || '';
+
+  fetch('https://script.google.com/macros/s/AKfycbxAa88Suw5B2er_V1ydFseowLQKkQ1SmfxsTGSkXzBYYtxLX2TJliqFG2oYYusnnWt2WA/exec', {
+    method: 'POST',
+    body: JSON.stringify(d)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(res){
+    document.getElementById('submitBtn').disabled = false;
+    if(res && res.status==='success') { onSuccess(res); }
+    else if(res && res.status==='duplicate') {
+      showProcessingOverlay(false);
+      showStatus(res.message,'error');
+      document.getElementById('submitBtn').disabled = false;
+    } else { onError(res); }
+  })
+  .catch(function(err){ onError(err); });
+}
+
+function onSuccess(res) {
+  showProcessingOverlay(false);
+  formSubmitted = true;
+  var isTa=(lang==='ta-IN'), isHi=(lang==='hi-IN');
+  var name    = (window._submitName||'').trim();
+  var village = (window._submitVillage||'').trim();
+  var today   = (document.getElementById('dateDisplay')||{}).textContent||'';
+  var greeting = isTa ? (name?name+' அவர்களே, வணக்கம்! 🙏':'வணக்கம்! 🙏')
+                :isHi  ? (name?'प्रिय '+name+', 🙏':'धन्यवाद! 🙏')
+                :        (name?'Dear '+name+', 🙏':'Thank you! 🙏');
+  var appBody = document.getElementById('appBody');
+  if (!appBody) return;
+  appBody.innerHTML =
+    '<div class="thankyou-wrap">'
+    +'<div class="thankyou-icon">✅</div>'
+    +'<div class="thankyou-org">Hand in Hand India · Midline Quantitative Survey</div>'
+    +'<div class="thankyou-heading">'+(isTa?'நன்றி!':isHi?'धन्यवाद!':'Survey Submitted!')+'</div>'
+    +'<div style="font-size:20px;font-weight:700;color:#1565C0;margin-bottom:16px">'+greeting+'</div>'
+    +'<div class="thankyou-card"><p>'
+    +(isTa?'📋 உங்கள் கணக்கெடுப்பு <strong>'+(today||'இன்று')+'</strong> அன்று பதிவு செய்யப்பட்டது.<br>கிராமம்: <strong>'+(village||'—')+'</strong><br><br>🙌 உங்கள் மதிப்புமிக்க பங்களிப்பிற்கு மிகவும் நன்றி.'
+    :isHi?'📋 आपका सर्वे <strong>'+(today||'आज')+'</strong> को दर्ज किया गया।<br>गाँव: <strong>'+(village||'—')+'</strong><br><br>🙌 आपके बहुमूल्य योगदान के लिए बहुत धन्यवाद।'
+    :'📋 Your response was recorded on <strong>'+(today||'today')+'</strong>.<br>Village: <strong>'+(village||'—')+'</strong><br><br>🙌 Your valuable input will help improve programmes for your community.')
+    +'</p></div>'
+    +'<hr class="thankyou-divider">'
+    +'<div class="thankyou-footer">'
+    +(isTa?'📞 உங்கள் கணக்கெடுப்பு ஒருங்கிணைப்பாளரிடம் தெரிவிக்கவும்.<br>தகவல் முற்றிலும் ரகசியமாக வைக்கப்படும்.<br><br><em>Hand in Hand India – மக்கள் வாழ்க்கையை மேம்படுத்துவதற்காக</em>'
+    :isHi?'📞 कृपया अपने सर्वे समन्वयक को सूचित करें।<br>सभी जानकारी पूरी तरह गोपनीय रखी जाएगी।<br><br><em>हैंड इन हैंड इंडिया – लोगों को सशक्त बनाना, जीवन बदलना</em>'
+    :'📞 Please inform your survey coordinator that this form has been submitted.<br>All information is kept strictly confidential.<br><br><em>Hand in Hand India – Empowering people, transforming lives</em>')
+    +'</div>'
+    +'<div class="thankyou-stars">🌟🌟🌟</div>'
+    +'</div>';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function onError(err) {
+  showProcessingOverlay(false);
+  var isTa=(lang==='ta-IN'), isHi=(lang==='hi-IN');
+  showStatus('❌ '+(isTa?'பிழை: ':isHi?'त्रुटि: ':'Error: ')+((err&&err.message)||err||'Unknown error'),'error');
+  var btn=document.getElementById('submitBtn'); if(btn) btn.disabled=false;
+}
+
+function showStatus(msg,type){
+  var d=document.getElementById('status'); if(!d) return;
+  d.textContent=msg; d.className='status '+type;
+}
+</script>
+</body>
+</html>
