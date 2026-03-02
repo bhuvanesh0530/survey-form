@@ -1458,12 +1458,7 @@ var lang = "en-IN";
 var formSubmitted = false;
 var gpsLat = "", gpsLng = "";
 var isRec = false, recog = null, curMicBtn = null, curMicField = null;
-var currentAudio = null, ttsActive = false, activeBtnId = null;
-
-var _consentChunks = [], _consentChunkIdx = 0;
-var _aadhaarConsentChunks = [], _aadhaarConsentChunkIdx = 0;
-
-var LANG_TTS = {"en-IN":"en","ta-IN":"ta","hi-IN":"hi"};
+var ttsActive = false, activeBtnId = null;
 
 // ================================================================
 //  INIT
@@ -1471,7 +1466,18 @@ var LANG_TTS = {"en-IN":"en","ta-IN":"ta","hi-IN":"hi"};
 window.onload = function() {
   captureGPS();
   setDate();
+  // Warm up speechSynthesis on page load (fixes first-click delay on some browsers)
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.getVoices();
+  }
 };
+
+// Pre-load voices list (Chrome loads them async)
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.getVoices();
+  };
+}
 
 function captureGPS() {
   if (navigator.geolocation) {
@@ -1662,7 +1668,7 @@ function updateLabels() {
   s('empFamilyLabel',      isTa?'குடும்ப உறுப்பினர்கள்':isHi?'परिवार के सदस्य':'Family Members');
   s('empOutsidersLabel',   isTa?'வெளியாட்கள்':isHi?'बाहरी लोग':'Outsiders');
   s('qUPIText',            isTa?'வணிக பரிவர்த்தனைகளுக்கு UPI/QR கோடை பயன்படுத்துகிறீர்களா?':isHi?'क्या आप व्यवसाय के लिए UPI/QR कोड का उपयोग करती हैं?':'Do you use UPI/QR code for business transactions?');
-  s('qDigitalToolsText',   isTa?'நிறுவனத்தை நிர்வகிக்க டிஜிட்டல் கருவிகளை பயன்படுத்துகிறீர்களா?':isHi?'क्या आप उद्यम प्रबंधन के लिए डिजिटल उपकरणों का उपयोग करती हैं?':'Do you use digital tools to manage your enterprise?');
+  s('qDigitalToolsText',   isTa?'நிறுவனத்தை நிர்வகிக்க டிஜிட்டல் கருவிகளை பயன்படுத்துகிறீர்களா?':isHi?'क்या आप उद्यम प्रबंधन के लिए डिजिटल उपकरणों का उपयोग करती हैं?':'Do you use digital tools to manage your enterprise?');
   s('qBizPlanText',        isTa?'அடுத்த 1-2 வருடங்களுக்கு எழுதப்பட்ட அல்லது மனதில் ஒரு வணிக திட்டம் உள்ளதா?':isHi?'क्या आपके पास अगले 1-2 वर्षों के लिए कोई व्यवसाय योजना है?':'Do you have a written or mental business plan for the next 1-2 years?');
   s('qEnergyEquipText',    isTa?'நிறுவனத்தில் ஆற்றல் சேமிக்கும் உபகரணங்களை ஏற்றுக்கொண்டீர்களா?':isHi?'क्या आपने उद्यम में ऊर्जा-बचत उपकरण अपनाए हैं?':'Have you adopted any energy-saving equipment in your enterprise?');
   s('qEnergyAuditText',    isTa?'HIH இந்தியா உங்கள் நிறுவனத்திற்கு ஆற்றல் தணிக்கை நடத்தியதா?':isHi?'क्या HIH India ने आपके उद्यम के लिए ऊर्जा ऑडिट किया है?':'Has HIH India conducted an energy audit for your enterprise?');
@@ -1873,8 +1879,10 @@ function showHide(id, show) {
 }
 
 // ================================================================
-//  TTS
+//  TTS — FIXED: Uses native speechSynthesis for ALL languages
+//  No proxy, no external fetch. Instant playback.
 // ================================================================
+
 function speakQText(qTextElemId, btnId) {
   var el = document.getElementById(qTextElemId);
   if (!el) return;
@@ -1882,7 +1890,6 @@ function speakQText(qTextElemId, btnId) {
   if (text) speakText(text, btnId);
 }
 
-// NEW: Matrix question speaker — reads question + row/col labels
 function speakMatrixQuestion(matrixType, btnId) {
   var text = '';
   var isTa = lang==='ta-IN', isHi = lang==='hi-IN';
@@ -1893,13 +1900,8 @@ function speakMatrixQuestion(matrixType, btnId) {
     var above18 = document.getElementById('fam18Above') ? document.getElementById('fam18Above').textContent.trim() : '18 years and above';
     var male = document.getElementById('famMaleHeader') ? document.getElementById('famMaleHeader').textContent.trim() : 'Male';
     var female = document.getElementById('famFemaleHeader') ? document.getElementById('famFemaleHeader').textContent.trim() : 'Female';
-    var sep = isTa ? '. ' : isHi ? '. ' : '. ';
     var enterNum = isTa ? 'எண்ணிக்கையை உள்ளிடவும்' : isHi ? 'संख्या दर्ज करें' : 'Enter number';
-    text = q + sep
-      + below18 + ' - ' + male + ': ' + enterNum + sep
-      + below18 + ' - ' + female + ': ' + enterNum + sep
-      + above18 + ' - ' + male + ': ' + enterNum + sep
-      + above18 + ' - ' + female + ': ' + enterNum;
+    text = q + '. ' + below18 + ' - ' + male + ': ' + enterNum + '. ' + below18 + ' - ' + female + ': ' + enterNum + '. ' + above18 + ' - ' + male + ': ' + enterNum + '. ' + above18 + ' - ' + female + ': ' + enterNum;
   } else if (matrixType === 'employees') {
     var qEl2 = document.getElementById('qEmployeesText');
     var q2 = qEl2 ? qEl2.textContent.trim() : '';
@@ -1907,187 +1909,132 @@ function speakMatrixQuestion(matrixType, btnId) {
     var outLbl = document.getElementById('empOutsidersLabel') ? document.getElementById('empOutsidersLabel').textContent.trim() : 'Outsiders';
     var ft = document.getElementById('empFTHeader') ? document.getElementById('empFTHeader').textContent.trim() : 'Full-time';
     var pt = document.getElementById('empPTHeader') ? document.getElementById('empPTHeader').textContent.trim() : 'Part-time';
-    var sep2 = '. ';
     var enterNum2 = isTa ? 'எண்ணிக்கையை உள்ளிடவும்' : isHi ? 'संख्या दर्ज करें' : 'Enter number';
-    text = q2 + sep2
-      + famLbl + ' - ' + ft + ': ' + enterNum2 + sep2
-      + famLbl + ' - ' + pt + ': ' + enterNum2 + sep2
-      + outLbl + ' - ' + ft + ': ' + enterNum2 + sep2
-      + outLbl + ' - ' + pt + ': ' + enterNum2;
+    text = q2 + '. ' + famLbl + ' - ' + ft + ': ' + enterNum2 + '. ' + famLbl + ' - ' + pt + ': ' + enterNum2 + '. ' + outLbl + ' - ' + ft + ': ' + enterNum2 + '. ' + outLbl + ' - ' + pt + ': ' + enterNum2;
   }
   if (text) speakText(text, btnId);
 }
 
+/**
+ * CORE TTS FUNCTION — Fixed version
+ * Uses browser's native speechSynthesis for ALL languages (en-IN, ta-IN, hi-IN).
+ * This eliminates the proxy/network delay completely.
+ * Android Chrome has built-in Tamil and Hindi TTS voices via Google TTS engine.
+ */
 function speakText(text, btnId) {
   if (!text || !text.trim()) return;
-  if (ttsActive) { stopAllAudio(); if (activeBtnId===btnId && btnId) return; }
-  activeBtnId = btnId;
-  if (btnId) setBtnState(btnId, true, 'loading');
-  var tl = LANG_TTS[lang] || 'en';
-  if (tl === 'en') {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang='en-IN'; u.rate=0.85; u.volume=1;
-      u.onstart=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
-      u.onend=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);};
-      u.onerror=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);};
-      window.speechSynthesis.speak(u);
-    } else { if(btnId)setBtnState(btnId,false); showTextPopup(text); }
+
+  // If already playing the same button, stop (toggle off)
+  if (ttsActive && activeBtnId === btnId && btnId) {
+    stopAllAudio();
     return;
   }
-  var inGAS=(typeof google!=='undefined'&&google.script&&google.script.run);
-  if (inGAS) {
-    google.script.run
-      .withSuccessHandler(function(b64){
-        if(!b64){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);return;}
-        stopAllAudio();
-        currentAudio=new Audio('data:audio/mpeg;base64,'+b64); currentAudio.volume=1;
-        currentAudio.onplay=function(){ttsActive=true;if(btnId)setBtnState(btnId,true,'playing');};
-        currentAudio.onended=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);currentAudio=null;};
-        currentAudio.onerror=function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);currentAudio=null;};
-        currentAudio.play().catch(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);});
-      })
-      .withFailureHandler(function(){ttsActive=false;if(btnId)setBtnState(btnId,false);showTextPopup(text);})
-      .TTSAudio(text,tl);
-  } else {
-    // Use Google Translate TTS for Tamil and Hindi
-    tl = LANG_TTS[lang] || 'ta';
-    var encoded = encodeURIComponent(text.substring(0, 180));
-    var proxyUrl = 'https://api.allorigins.win/raw?url=' 
-      + encodeURIComponent(
-          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
-          + encoded + '&tl=' + tl + '&client=gtx'
-        );
-    stopAllAudio();
-    if (btnId) setBtnState(btnId, true, 'loading');
-    fetch(proxyUrl)
-      .then(function(r){ return r.blob(); })
-      .then(function(blob){
-        var blobUrl = URL.createObjectURL(blob);
-        currentAudio = new Audio(blobUrl);
-        currentAudio.volume = 1;
-        currentAudio.onplay = function(){ ttsActive=true; if(btnId) setBtnState(btnId,true,'playing'); };
-        currentAudio.onended = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; URL.revokeObjectURL(blobUrl); };
-        currentAudio.onerror = function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); currentAudio=null; showTextPopup(text); };
-        currentAudio.play().catch(function(){ ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text); });
-      })
-      .catch(function(){
-        ttsActive=false; if(btnId) setBtnState(btnId,false); showTextPopup(text);
-      });
+
+  // Stop any currently playing audio first
+  stopAllAudio();
+
+  if (!('speechSynthesis' in window)) {
+    // Fallback: show text popup if browser doesn't support TTS
+    showTextPopup(text);
+    return;
   }
+
+  activeBtnId = btnId;
+  if (btnId) setBtnState(btnId, true, 'loading');
+
+  // Cancel any queued speech
+  window.speechSynthesis.cancel();
+
+  // Small delay ensures cancel() takes effect before new utterance
+  setTimeout(function() {
+    var utterance = new SpeechSynthesisUtterance(text);
+
+    // Set correct language tag — Android Chrome uses this to pick the right voice
+    utterance.lang = lang; // 'en-IN', 'ta-IN', or 'hi-IN'
+    utterance.rate = 0.88;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    utterance.onstart = function() {
+      ttsActive = true;
+      if (btnId) setBtnState(btnId, true, 'playing');
+    };
+
+    utterance.onend = function() {
+      ttsActive = false;
+      activeBtnId = null;
+      if (btnId) setBtnState(btnId, false);
+    };
+
+    utterance.onerror = function(e) {
+      ttsActive = false;
+      activeBtnId = null;
+      if (btnId) setBtnState(btnId, false);
+      // Only show popup for non-interruption errors
+      if (e.error !== 'interrupted' && e.error !== 'canceled') {
+        showTextPopup(text);
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }, 50);
 }
 
 function stopAllAudio() {
-  if ('speechSynthesis' in window) { try{window.speechSynthesis.cancel();}catch(e){} }
-  if (currentAudio) { try{currentAudio.pause();currentAudio.currentTime=0;}catch(e){} currentAudio=null; }
-  ttsActive=false;
-  if (activeBtnId) setBtnState(activeBtnId,false);
-  activeBtnId=null;
+  if ('speechSynthesis' in window) {
+    try { window.speechSynthesis.cancel(); } catch(e) {}
+  }
+  ttsActive = false;
+  if (activeBtnId) setBtnState(activeBtnId, false);
+  activeBtnId = null;
 }
 
-function setBtnState(btnId,on,state) {
+function setBtnState(btnId, on, state) {
   if (!btnId) return;
-  var b=document.getElementById(btnId); if(!b) return;
+  var b = document.getElementById(btnId); if (!b) return;
   b.classList.remove('loading','playing');
-  if(!on){b.textContent='🔊';return;}
-  if(state==='loading'){b.textContent='⏳';b.classList.add('loading');}
-  else{b.textContent='⏹️';b.classList.add('playing');}
+  if (!on) { b.textContent = '🔊'; return; }
+  if (state === 'loading') { b.textContent = '⏳'; b.classList.add('loading'); }
+  else { b.textContent = '⏹️'; b.classList.add('playing'); }
 }
 
 function showTextPopup(text) {
-  var p=document.getElementById('tts-popup'); if(!p) return;
-  p.textContent='🔊 '+text.substring(0,200)+(text.length>200?'…':'');
-  p.style.display='block'; clearTimeout(p._t);
-  p._t=setTimeout(function(){p.style.display='none';},6000);
+  var p = document.getElementById('tts-popup'); if (!p) return;
+  p.textContent = '🔊 ' + text.substring(0,200) + (text.length > 200 ? '…' : '');
+  p.style.display = 'block';
+  clearTimeout(p._t);
+  p._t = setTimeout(function(){ p.style.display = 'none'; }, 6000);
 }
 
 // ================================================================
-//  CONSENT AUDIO
+//  CONSENT AUDIO — Also uses native speechSynthesis
 // ================================================================
 function toggleConsentAudio() {
-  if (ttsActive && activeBtnId==='btn-consent-audio') { stopAllAudio(); _consentChunks=[]; _consentChunkIdx=0; return; }
+  var btn = document.getElementById('btn-consent-audio');
+  if (ttsActive && activeBtnId === 'btn-consent-audio') {
+    stopAllAudio();
+    return;
+  }
   var fullText = T[lang].consent.text;
-  if (lang==='en-IN') { speakText(fullText,'btn-consent-audio'); return; }
-  _consentChunks = _splitIntoChunks(fullText);
-  _consentChunkIdx=0; activeBtnId='btn-consent-audio'; setBtnState('btn-consent-audio',true,'loading');
-  _speakChunks(_consentChunks, _consentChunkIdx, 'btn-consent-audio', function(idx){ _consentChunkIdx=idx; });
+  speakText(fullText, 'btn-consent-audio');
 }
 
 function toggleAadhaarConsentAudio() {
-  if (ttsActive && activeBtnId==='btn-aadhaar-consent-audio') { stopAllAudio(); _aadhaarConsentChunks=[]; _aadhaarConsentChunkIdx=0; return; }
+  var btn = document.getElementById('btn-aadhaar-consent-audio');
+  if (ttsActive && activeBtnId === 'btn-aadhaar-consent-audio') {
+    stopAllAudio();
+    return;
+  }
   var fullText = T[lang].consent.aadhaarText;
-  if (lang==='en-IN') { speakText(fullText,'btn-aadhaar-consent-audio'); return; }
-  _aadhaarConsentChunks = _splitIntoChunks(fullText);
-  _aadhaarConsentChunkIdx=0; activeBtnId='btn-aadhaar-consent-audio'; setBtnState('btn-aadhaar-consent-audio',true,'loading');
-  _speakChunks(_aadhaarConsentChunks, _aadhaarConsentChunkIdx, 'btn-aadhaar-consent-audio', function(idx){ _aadhaarConsentChunkIdx=idx; });
-}
-
-function _splitIntoChunks(fullText) {
-  var sentences = fullText.split(/(?<=[।.!?\n])\s*/u).filter(function(s){return s.trim().length>0;});
-  var chunks=[], chunk='';
-  for(var i=0;i<sentences.length;i++){
-    var s=sentences[i].trim(); if(!s) continue;
-    if((chunk+' '+s).trim().length<=190){chunk=(chunk+' '+s).trim();}
-    else{if(chunk)chunks.push(chunk);chunk=s;}
-  }
-  if(chunk)chunks.push(chunk);
-  return chunks;
-}
-
-function _speakChunks(chunks, startIdx, btnId, onIdxUpdate) {
-  if(startIdx >= chunks.length){ stopAllAudio(); return; }
-  var chunk = chunks[startIdx];
-  var inGAS=(typeof google!=='undefined'&&google.script&&google.script.run);
-  var tl=LANG_TTS[lang]||'en';
-  if(inGAS){
-    google.script.run
-      .withSuccessHandler(function(b64){
-        if(!b64){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);return;}
-        stopAllAudio(); activeBtnId=btnId;
-        currentAudio=new Audio('data:audio/mpeg;base64,'+b64); currentAudio.volume=1;
-        currentAudio.onplay=function(){ttsActive=true;setBtnState(btnId,true,'playing');};
-        currentAudio.onended=function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
-        currentAudio.onerror=function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);};
-        currentAudio.play().catch(function(){ttsActive=false;currentAudio=null;onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);});
-      })
-      .withFailureHandler(function(){onIdxUpdate(startIdx+1);_speakChunks(chunks,startIdx+1,btnId,onIdxUpdate);})
-      .TTSAudio(chunk,tl);
-  } else {
-    var tl2 = LANG_TTS[lang] || 'ta';
-    var encoded2 = encodeURIComponent(chunk.substring(0, 180));
-    var proxyUrl2 = 'https://api.allorigins.win/raw?url='
-      + encodeURIComponent(
-          'https://translate.googleapis.com/translate_tts?ie=UTF-8&q='
-          + encoded2 + '&tl=' + tl2 + '&client=gtx'
-        );
-    fetch(proxyUrl2)
-      .then(function(r){ return r.blob(); })
-      .then(function(blob){
-        var blobUrl = URL.createObjectURL(blob);
-        stopAllAudio(); activeBtnId = btnId;
-        currentAudio = new Audio(blobUrl);
-        currentAudio.volume = 1;
-        currentAudio.onplay = function(){ ttsActive=true; setBtnState(btnId,true,'playing'); };
-        currentAudio.onended = function(){ ttsActive=false; currentAudio=null; URL.revokeObjectURL(blobUrl); onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
-        currentAudio.onerror = function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); };
-        currentAudio.play().catch(function(){ ttsActive=false; currentAudio=null; onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
-      })
-      .catch(function(){ onIdxUpdate(startIdx+1); _speakChunks(chunks,startIdx+1,btnId,onIdxUpdate); });
-  }
+  speakText(fullText, 'btn-aadhaar-consent-audio');
 }
 
 // ================================================================
-//  MICROPHONE — FIXED with permissions + numeric conversion
+//  MICROPHONE
 // ================================================================
-
-// Convert spoken words to numbers (English, Tamil, Hindi)
 function wordsToNumber(transcript) {
   var t = transcript.trim().toLowerCase();
-  // If already a number string, return as-is
   if (/^\d+$/.test(t)) return t;
-
-  // English word map
   var enMap = {
     'zero':0,'one':1,'two':2,'three':3,'four':4,'five':5,'six':6,'seven':7,
     'eight':8,'nine':9,'ten':10,'eleven':11,'twelve':12,'thirteen':13,
@@ -2095,28 +2042,17 @@ function wordsToNumber(transcript) {
     'nineteen':19,'twenty':20,'thirty':30,'forty':40,'fifty':50,
     'sixty':60,'seventy':70,'eighty':80,'ninety':90,'hundred':100,'thousand':1000
   };
-  // Tamil digit words
   var taMap = {
     'பூஜ்யம்':0,'ஒன்று':1,'இரண்டு':2,'மூன்று':3,'நான்கு':4,'ஐந்து':5,
     'ஆறு':6,'ஏழு':7,'எட்டு':8,'ஒன்பது':9,'பத்து':10,'நூறு':100
   };
-  // Hindi digit words
   var hiMap = {
     'शून्य':0,'एक':1,'दो':2,'तीन':3,'चार':4,'पाँच':5,'पांच':5,
     'छह':6,'सात':7,'आठ':8,'नौ':9,'दस':10,'सौ':100,'हजार':1000
   };
-
-  // Check Tamil
   var tOrig = transcript.trim();
-  for (var tk in taMap) {
-    if (tOrig.indexOf(tk) !== -1) return String(taMap[tk]);
-  }
-  // Check Hindi
-  for (var hk in hiMap) {
-    if (tOrig.indexOf(hk) !== -1) return String(hiMap[hk]);
-  }
-
-  // Try English compound numbers (e.g. "twenty five" = 25)
+  for (var tk in taMap) { if (tOrig.indexOf(tk) !== -1) return String(taMap[tk]); }
+  for (var hk in hiMap) { if (tOrig.indexOf(hk) !== -1) return String(hiMap[hk]); }
   var words = t.split(/[\s-]+/);
   var total = 0, current = 0, found = false;
   for (var i = 0; i < words.length; i++) {
@@ -2130,7 +2066,7 @@ function wordsToNumber(transcript) {
     }
   }
   if (found) return String(total + current);
-  return transcript; // return original if no conversion
+  return transcript;
 }
 
 function startMic(field) {
@@ -2141,37 +2077,23 @@ function startMic(field) {
           'Please use Google Chrome for voice input.');
     return;
   }
-
   var btn = document.getElementById('mic-'+field);
-
-  // If already recording this field, stop it
   if (isRec && curMicField === field) {
     if (recog) { try { recog.stop(); } catch(e){} }
     return;
   }
-  // If recording a different field, stop previous first
   if (isRec && recog) {
     try { recog.stop(); } catch(e){}
     isRec = false;
     if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent='🎤'; }
   }
-
-  // Determine if target field is numeric
+  var directNumericIds = ['familyBelow18Male','familyBelow18Female','family18AboveMale','family18AboveFemale',
+                          'empFamilyFulltime','empFamilyParttime','empOutsidersFulltime','empOutsidersParttime'];
   var targetEl = document.getElementById(field+'Text') || document.getElementById(field+'Audio');
   var isNumericField = false;
   if (targetEl) {
-    isNumericField = (targetEl.type === 'number') ||
-      (field === 'age') || (field === 'aadhaar') ||
-      (field === 'familyBelow18Male') || (field === 'familyBelow18Female') ||
-      (field === 'family18AboveMale') || (field === 'family18AboveFemale') ||
-      (field === 'empFamilyFulltime') || (field === 'empFamilyParttime') ||
-      (field === 'empOutsidersFulltime') || (field === 'empOutsidersParttime');
+    isNumericField = (targetEl.type === 'number') || (field === 'age') || (field === 'aadhaar');
   }
-  // Also check by element id directly for matrix fields (they have no Audio pair)
-  var directNumericIds = ['familyBelow18Male','familyBelow18Female','family18AboveMale','family18AboveFemale',
-                          'empFamilyFulltime','empFamilyParttime','empOutsidersFulltime','empOutsidersParttime'];
-
-  // Request mic permission explicitly first, then start recognition
   _doStartRecognition(field, btn, isNumericField, directNumericIds);
 }
 
@@ -2184,78 +2106,59 @@ function _doStartRecognition(field, btn, isNumericField, directNumericIds) {
   recog.continuous = false;
 
   recog.onstart = function() {
-    isRec = true;
-    curMicBtn = btn;
-    curMicField = field;
+    isRec = true; curMicBtn = btn; curMicField = field;
     if (btn) { btn.classList.add('recording'); btn.textContent = '⏹️'; }
   };
 
   recog.onresult = function(e) {
     if (!e.results || !e.results.length) return;
     var transcript = e.results[0][0].transcript.trim();
-
-    // Determine where to put the result
     var textEl  = document.getElementById(field+'Text');
     var audioEl = document.getElementById(field+'Audio');
-
-    // Check if field is a direct numeric element (matrix inputs)
     var isDirect = (directNumericIds.indexOf(field) !== -1);
-
     if (isDirect) {
-      // Matrix field: direct number input element
       var directEl = document.getElementById(field);
-      if (directEl) {
-        var num = wordsToNumber(transcript);
-        directEl.value = /^\d+$/.test(num) ? num : transcript;
-      }
+      if (directEl) { var num = wordsToNumber(transcript); directEl.value = /^\d+$/.test(num) ? num : transcript; }
     } else if (isNumericField && textEl && textEl.type === 'number') {
-      // Numeric text field (age, aadhaar)
       var converted = wordsToNumber(transcript);
       textEl.value = /^\d+$/.test(converted) ? converted : transcript;
       if (audioEl) audioEl.value = transcript;
     } else {
-      // Regular text field
       if (audioEl) audioEl.value = transcript;
       else if (textEl) textEl.value = transcript;
     }
   };
 
   recog.onend = function() {
-    isRec = false;
-    curMicField = null;
+    isRec = false; curMicField = null;
     if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent = '🎤'; curMicBtn = null; }
   };
 
   recog.onerror = function(e) {
-    isRec = false;
-    curMicField = null;
+    isRec = false; curMicField = null;
     if (curMicBtn) { curMicBtn.classList.remove('recording'); curMicBtn.textContent = '🎤'; curMicBtn = null; }
     if (e.error === 'not-allowed' || e.error === 'permission-denied') {
-      var msg = lang==='ta-IN' ? 'மைக்ரோஃபோன் அனுமதிக்கு, லிங்கை புதிய டேப்பில் திறக்கவும்.' :
-                lang==='hi-IN' ? 'माइक्रोफोन के लिए लिंक को नए टैब में खोलें।' :
-                'For microphone access, please open this link in a new tab directly.';
-      alert(msg);
+      alert(lang==='ta-IN' ? 'மைக்ரோஃபோன் அனுமதிக்கு, லிங்கை புதிய டேப்பில் திறக்கவும்.' :
+            lang==='hi-IN' ? 'माइक्रोफोन के लिए लिंक को नए टैब में खोलें।' :
+            'For microphone access, please open this link in a new tab directly.');
     }
   };
 
-  try {
-    recog.start();
-  } catch(e) {
-    isRec = false;
-    curMicField = null;
+  try { recog.start(); } catch(e) {
+    isRec = false; curMicField = null;
     if (btn) { btn.classList.remove('recording'); btn.textContent = '🎤'; }
   }
 }
 
 // ================================================================
-//  PROCESSING OVERLAY
+//  SUBMIT OVERLAY
 // ================================================================
 function showProcessingOverlay(on) {
-  var ov=document.getElementById('submit-overlay'); if(!ov) return;
-  var isTa=(lang==='ta-IN'),isHi=(lang==='hi-IN');
-  if(on){
-    document.getElementById('overlay-msg').textContent=isTa?'⏳ கணக்கெடுப்பை சமர்ப்பிக்கிறோம்…':isHi?'⏳ सर्वे जमा किया जा रहा है…':'⏳ Submitting your survey…';
-    document.getElementById('overlay-submsg').textContent=isTa?'காத்திருக்கவும். பக்கத்தை மூடாதீர்கள்.':isHi?'कृपया प्रतीक्षा करें। पेज बंद न करें।':'Please wait. Do not close this page.';
+  var ov = document.getElementById('submit-overlay'); if (!ov) return;
+  var isTa=(lang==='ta-IN'), isHi=(lang==='hi-IN');
+  if (on) {
+    document.getElementById('overlay-msg').textContent = isTa?'⏳ கணக்கெடுப்பை சமர்ப்பிக்கிறோம்…':isHi?'⏳ सर्वे जमा किया जा रहा है…':'⏳ Submitting your survey…';
+    document.getElementById('overlay-submsg').textContent = isTa?'காத்திருக்கவும். பக்கத்தை மூடாதீர்கள்.':isHi?'कृपया प्रतीक्षा करें। पेज बंद न करें।':'Please wait. Do not close this page.';
     ov.classList.add('visible');
   } else {
     ov.classList.remove('visible');
@@ -2278,7 +2181,7 @@ function submitForm() {
   if (!req('ageText','Please enter Age.','வயதை உள்ளிடவும்.','आयु भरें।')) return;
   if (!reqSel('gender','Please select Gender.','பாலினம் தேர்ந்தெடுக்கவும்.','लिंग चुनें।')) return;
   if (!reqSel('marital','Please select Marital Status.','திருமண நிலை தேர்ந்தெடுக்கவும்.','वैवाहिक स्थिति चुनें।')) return;
-  if (!reqSel('social','Please select Social Category.','சமூக வகை தேர்ந்தெடுக்கவும்.','सामाजिक श्रेணी चुनें।')) return;
+  if (!reqSel('social','Please select Social Category.','சமூக வகை தேர்ந்தெடுக்கவும்.','सामाजिक श्रेणी चुनें।')) return;
   if (!reqSel('education','Please select Education Level.','கல்வி நிலை தேர்ந்தெடுக்கவும்.','शिक्षा स्तर चुनें।')) return;
   if (!reqSel('primaryincome','Please select Primary Income source.','வருமான ஆதாரம் தேர்ந்தெடுக்கவும்.','आय का स्रोत चुनें।')) return;
   if (!reqSel('hihmember','Please answer: Are you a HIH SHG member?','HIH SHG உறுப்பினர் பதில் தேர்ந்தெடுக்கவும்.','HIH SHG सदस्यता का जवाब चुनें।')) return;
@@ -2444,8 +2347,8 @@ function submitForm() {
   .then(function(r){ return r.json(); })
   .then(function(res){
     document.getElementById('submitBtn').disabled = false;
-    if(res && res.status==='success') { onSuccess(res); }
-    else if(res && res.status==='duplicate') {
+    if (res && res.status==='success') { onSuccess(res); }
+    else if (res && res.status==='duplicate') {
       showProcessingOverlay(false);
       showStatus(res.message,'error');
       document.getElementById('submitBtn').disabled = false;
